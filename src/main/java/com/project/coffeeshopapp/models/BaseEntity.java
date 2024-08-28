@@ -16,11 +16,11 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     @CreatedDate
     private Date createdDate;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", updatable = false)
     @CreatedBy
     private String createdBy;
 
