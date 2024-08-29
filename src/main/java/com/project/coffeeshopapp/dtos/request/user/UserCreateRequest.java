@@ -1,4 +1,4 @@
-package com.project.coffeeshopapp.dtos;
+package com.project.coffeeshopapp.dtos.request.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.customannotations.ValidEmail;
@@ -7,13 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Date;
-
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserCreateRequest {
     @JsonProperty("fullname")
     @Size(min = 3, max = 200)
     private String fullName;
@@ -40,10 +37,13 @@ public class UserDTO {
     @Size(min = 4, max = 50)
     private String retypePassword;
 
+    @JsonProperty("is_active")
+    private Boolean isActive;
+
     private Boolean sex;
 
     @JsonProperty("date_of_birth")
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
     @NotNull(message = "Role id is required")
     @JsonProperty("role_id")

@@ -1,4 +1,4 @@
-package com.project.coffeeshopapp.responses;
+package com.project.coffeeshopapp.dtos.response.api;
 
 import lombok.*;
 
