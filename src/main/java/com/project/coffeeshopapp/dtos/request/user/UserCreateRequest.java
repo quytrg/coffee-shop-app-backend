@@ -11,11 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCreateRequest {
-    @JsonProperty("fullname")
     @Size(min = 3, max = 200)
     private String fullName;
 
-    @JsonProperty("phone_number")
     @NotBlank(message = "Phone number is required")
     @Size(min = 9, max = 10)
     private String phoneNumber;
@@ -32,20 +30,16 @@ public class UserCreateRequest {
     @Size(min = 4, max = 50)
     private String password;
 
-    @JsonProperty("retype_password")
     @NotBlank(message = "Retype password can not be blank")
     @Size(min = 4, max = 50)
     private String retypePassword;
 
-    @JsonProperty("is_active")
     private Boolean isActive;
 
     private Boolean sex;
 
-    @JsonProperty("date_of_birth")
     private String dateOfBirth;
 
     @NotNull(message = "Role id is required")
-    @JsonProperty("role_id")
     private Long roleId;
 }
