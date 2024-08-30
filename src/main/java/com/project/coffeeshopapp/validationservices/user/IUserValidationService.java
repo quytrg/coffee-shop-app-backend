@@ -1,7 +1,7 @@
 package com.project.coffeeshopapp.validationservices.user;
 
-import com.project.coffeeshopapp.dtos.UserDTO;
+import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 
 public interface IUserValidationService {
-    void validateUserForCreation(UserDTO userDTO);
+    void validateUserForCreation(UserCreateRequest userCreateRequest);
 }

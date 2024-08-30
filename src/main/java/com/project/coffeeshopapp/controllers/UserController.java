@@ -1,8 +1,8 @@
 package com.project.coffeeshopapp.controllers;
 
-import com.project.coffeeshopapp.dtos.UserDTO;
-import com.project.coffeeshopapp.models.User;
-import com.project.coffeeshopapp.responses.SuccessResponse;
+import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
+import com.project.coffeeshopapp.dtos.response.user.UserResponse;
+import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.services.user.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,13 @@ public class UserController {
     private final IUserService userService;
 
     @PostMapping()
-    public ResponseEntity<SuccessResponse<?>> createUser(@Valid @RequestBody UserDTO userDTO){
-        User user = userService.createUser(userDTO);
+    public ResponseEntity<SuccessResponse<?>> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest){
+        UserResponse userResponse = userService.createUser(userCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 SuccessResponse.builder()
                         .status(HttpStatus.CREATED.value())
                         .message("User is successfully created")
+                        .data(userResponse)
                         .build()
         );
     }
