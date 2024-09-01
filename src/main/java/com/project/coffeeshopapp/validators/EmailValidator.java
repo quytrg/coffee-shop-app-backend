@@ -1,6 +1,6 @@
 package com.project.coffeeshopapp.validators;
 
-import com.project.customannotations.ValidEmail;
+import com.project.coffeeshopapp.customannotations.ValidEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -31,4 +31,7 @@ public class BaseEntity {
     @Column(name = "updated_by")
     @LastModifiedBy
     private String lastModifiedBy;
+
+    @Column(name = "deleted")
+    private Boolean deleted = Boolean.FALSE;
 }

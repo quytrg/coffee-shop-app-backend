@@ -1,7 +1,6 @@
 package com.project.coffeeshopapp.dtos.request.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.customannotations.ValidEmail;
+import com.project.coffeeshopapp.customannotations.ValidEmail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

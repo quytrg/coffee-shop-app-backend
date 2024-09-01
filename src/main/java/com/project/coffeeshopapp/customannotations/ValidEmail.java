@@ -1,4 +1,4 @@
-package com.project.customannotations;
+package com.project.coffeeshopapp.customannotations;
 
 import com.project.coffeeshopapp.validators.EmailValidator;
 import jakarta.validation.Constraint;

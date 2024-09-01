@@ -1,10 +1,13 @@
 package com.project.coffeeshopapp.controlleradvices;
 
+import com.project.coffeeshopapp.customexceptions.InvalidParamException;
 import com.project.coffeeshopapp.customexceptions.PasswordMismatchException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -75,4 +78,43 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ErrorResponse.builder()
+                        .status(HttpStatus.UNAUTHORIZED.value())
+                        .message("Authentication failed")
+                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+                                .field("phoneNumber or password")
+                                .message("Invalid phone number or password")
+                                .build()))
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(InvalidParamException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidParamException(InvalidParamException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                ErrorResponse.builder()
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .message("Invalid parameters provided")
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ErrorResponse.builder()
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .message("User not found")
+                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+                                .field("phoneNumber")
+                                .message(ex.getMessage())
+                                .build()))
+                        .build()
+        );
+    }
+
 }
