@@ -3,6 +3,7 @@ package com.project.coffeeshopapp.filters;
 import com.project.coffeeshopapp.customexceptions.UnauthorizedException;
 import com.project.coffeeshopapp.models.CustomUserDetails;
 import com.project.coffeeshopapp.utils.JwtUtil;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+
+    private List<Pair<String, String>> bypassTokens;
+
+    @PostConstruct
+    public void init() {
+        bypassTokens = Arrays.asList(
+                Pair.of(String.format("%s/users/login", apiPrefix), "POST")
+        );
+    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -67,15 +77,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isBypassToken(@NonNull  HttpServletRequest request) {
-        final List<Pair<String, String>> bypassTokens = Arrays.asList(
-                Pair.of(String.format("%s/users/login", apiPrefix), "POST")
+        return bypassTokens.stream().anyMatch(
+                pair -> request.getServletPath().contains(pair.getFirst()) &&
+                        request.getMethod().equals(pair.getSecond())
         );
-        for(Pair<String, String> bypassToken: bypassTokens) {
-            if (request.getServletPath().contains(bypassToken.getFirst()) &&
-                    request.getMethod().equals(bypassToken.getSecond())) {
-                return true;
-            }
-        }
-        return false;
     }
 }
