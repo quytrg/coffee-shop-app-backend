@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.services.user;
 
+import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
+import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.mappers.UserMapper;
@@ -17,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
@@ -30,8 +34,6 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse createUser(UserCreateRequest userCreateRequest){
-        // validate userCreateRequest
-        userValidationService.validateUserForCreation(userCreateRequest);
         // convert from userCreateRequest to User
         User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
         // encode password
@@ -54,4 +56,19 @@ public class UserService implements IUserService {
         String token = jwtUtil.generateToken(customUserDetails);
         return new JwtResponse(token);
     }
+
+    @Override
+    public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
+        User user = userRepository.findByIdAndIsActiveAndDeleted(id, true, false)
+                .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
+        // convert userUpdateRequest to user
+        userMapper.userUpdateRequestToUser(userUpdateRequest, user);
+        // hash password if it presents
+        Optional.ofNullable(userUpdateRequest.getPassword())
+                .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
+        // save update
+        User updatedUser = userRepository.save(user);
+        return userMapper.userToUserResponse(updatedUser);
+    }
+
 }

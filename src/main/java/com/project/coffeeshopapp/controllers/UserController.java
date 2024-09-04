@@ -2,11 +2,13 @@ package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserLoginRequest;
+import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.services.user.IUserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,19 @@ public class UserController {
                             .data(jwtResponse)
                             .build()
             );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> updateUser(
+            @PathVariable(name = "id") Long id,
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest){
+        UserResponse userResponse = userService.updateUser(id, userUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                SuccessResponse.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("User is successfully updated")
+                        .data(userResponse)
+                        .build()
+        );
     }
 }

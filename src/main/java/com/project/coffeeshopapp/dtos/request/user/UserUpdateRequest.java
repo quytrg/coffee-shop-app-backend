@@ -4,40 +4,34 @@ import com.project.coffeeshopapp.customannotations.PasswordMatches;
 import com.project.coffeeshopapp.customannotations.UniquePhoneNumber;
 import com.project.coffeeshopapp.customannotations.ValidEmail;
 import com.project.coffeeshopapp.validationservices.contracts.PasswordMatchingCheckable;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @PasswordMatches
-public class UserCreateRequest implements PasswordMatchingCheckable {
-    @Size(min = 3, max = 200)
+public class UserUpdateRequest implements PasswordMatchingCheckable {
+    @Size(min = 1, max = 30, message = "Full name length must be between {min} and {max} characters")
     private String fullName;
 
-    @NotBlank(message = "Phone number is required")
-    @Size(min = 9, max = 10)
+    @Size(min = 9, max = 10, message = "Phone number length must be between {min} and {max} digits")
     @UniquePhoneNumber
     private String phoneNumber;
 
-    @NotBlank(message = "Email can not be blank")
-    @Size(min = 5, max = 100)
+    @Size(min = 5, max = 100, message = "Email length must be between {min} and {max} characters")
     @ValidEmail
     private String email;
 
     @Size(max = 200)
     private String address;
 
-    @NotBlank(message = "Password can not be blank")
-    @Size(min = 4, max = 50)
+    @Size(min = 4, max = 50, message = "Password length must be between {min} and {max} characters")
     private String password;
 
-    @NotBlank(message = "Retype password can not be blank")
-    @Size(min = 4, max = 50)
+    @Size(min = 4, max = 50, message = "Retype password length must be between {min} and {max} characters")
     private String retypePassword;
 
     private Boolean isActive;
@@ -46,6 +40,6 @@ public class UserCreateRequest implements PasswordMatchingCheckable {
 
     private String dateOfBirth;
 
-    @NotNull(message = "Role id is required")
     private Long roleId;
 }
+

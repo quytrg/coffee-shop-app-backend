@@ -1,8 +1,9 @@
 package com.project.coffeeshopapp.controlleradvices;
 
+import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
-import com.project.coffeeshopapp.customexceptions.PasswordMismatchException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,39 +46,59 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Failed to create user due to data constraints violation")
+                .message("Validation failed")
                 .errors(errorDetails)
                 .build();
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> ErrorResponse.ErrorDetail.builder()
+                        .field(violation.getPropertyPath().toString())
+                        .message(violation.getMessage())
+                        .build())
+                .toList();
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .errors(errorDetails)
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    // handle exceptions that be thrown due to violate data constraints of database
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         return ResponseEntity.badRequest().body(
                 ErrorResponse.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
-                        .message("Failed to create user due to data constraints violation")
+                        .message("Data constraints violation")
                         .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("Data constraint")
+                                .field("Unknown")
                                 .message(ex.getMostSpecificCause().getMessage())
                                 .build()))
                         .build());
     }
 
-    @ExceptionHandler(PasswordMismatchException.class)
-    public ResponseEntity<ErrorResponse> handlePasswordMismatchException(PasswordMismatchException ex) {
-        return ResponseEntity.badRequest().body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .message("Failed to create user")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("retype_password")
-                                .message(ex.getMessage())
-                                .build()))
-                        .build()
-        );
-    }
+//    @ExceptionHandler(PasswordMismatchException.class)
+//    public ResponseEntity<ErrorResponse> handlePasswordMismatchException(PasswordMismatchException ex) {
+//        return ResponseEntity.badRequest().body(
+//                ErrorResponse.builder()
+//                        .status(HttpStatus.BAD_REQUEST.value())
+//                        .message("Failed to create user")
+//                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+//                                .field("retype_password")
+//                                .message(ex.getMessage())
+//                                .build()))
+//                        .build()
+//        );
+//    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
@@ -116,5 +137,21 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDataNotFoundException(DataNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ErrorResponse.builder()
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .message("Data not found")
+                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+                                .field(ex.getEntityName())
+                                .message(ex.getMessage())
+                                .build()))
+                        .build()
+        );
+    }
+
+
 
 }
