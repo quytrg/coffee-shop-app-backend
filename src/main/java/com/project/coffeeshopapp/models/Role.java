@@ -19,11 +19,11 @@ public class Role extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "role",
-            fetch = FetchType.LAZY,
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE },
-            orphanRemoval = true)
-    private Set<User> users = new HashSet<>();
+//    @OneToMany(mappedBy = "role",
+//            fetch = FetchType.LAZY,
+//            cascade = { CascadeType.PERSIST, CascadeType.MERGE },
+//            orphanRemoval = true)
+//    private Set<User> users = new HashSet<>();
 
     // fetch permissions along with role for authentication
     @ManyToMany(fetch = FetchType.EAGER)

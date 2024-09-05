@@ -15,10 +15,11 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "name")
     private String name;
 
     @ManyToMany(mappedBy = "permissions")
     private Set<Role> roles;
+
+    private String description;
 }
