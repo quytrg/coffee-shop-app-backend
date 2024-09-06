@@ -34,7 +34,7 @@ public class Role extends BaseEntity {
     )
     private Set<Permission> permissions = new HashSet<>();
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @NotBlank(message = "Role name cannot be blank")
     @Size(max = 100, message = "Role name cannot exceed 100 characters")
     private String name;
