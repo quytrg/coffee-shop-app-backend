@@ -27,7 +27,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 SuccessResponse.builder()
                         .status(HttpStatus.CREATED.value())
-                        .message("User is successfully created")
+                        .message("User was successfully created")
                         .data(userResponse)
                         .build()
         );
@@ -54,7 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 SuccessResponse.builder()
                         .status(HttpStatus.OK.value())
-                        .message("User is successfully updated")
+                        .message("User was successfully updated")
                         .data(userResponse)
                         .build()
         );
