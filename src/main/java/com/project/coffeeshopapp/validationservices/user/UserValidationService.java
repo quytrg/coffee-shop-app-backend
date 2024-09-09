@@ -1,12 +1,9 @@
 package com.project.coffeeshopapp.validationservices.user;
 
-import com.project.coffeeshopapp.customexceptions.PasswordMismatchException;
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.repositories.UserRepository;
-import com.project.coffeeshopapp.utils.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service

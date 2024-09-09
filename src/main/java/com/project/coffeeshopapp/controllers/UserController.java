@@ -7,8 +7,8 @@ import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.services.user.IUserService;
+import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,43 +20,38 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final IUserService userService;
+    private final ResponseUtil responseUtil;
 
     @PostMapping()
-    public ResponseEntity<SuccessResponse<?>> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest){
+    public ResponseEntity<SuccessResponse<UserResponse>> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest) {
         UserResponse userResponse = userService.createUser(userCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                SuccessResponse.builder()
-                        .status(HttpStatus.CREATED.value())
-                        .message("User was successfully created")
-                        .data(userResponse)
-                        .build()
+        return responseUtil.createSuccessResponse(
+                userResponse,
+                "User was successfully created",
+                HttpStatus.CREATED
         );
     }
 
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse<JwtResponse>> login(
             @Valid @RequestBody UserLoginRequest userLoginRequest) {
-            JwtResponse jwtResponse = userService.login(userLoginRequest.getPhoneNumber(), userLoginRequest.getPassword());
-            return ResponseEntity.ok(
-                    SuccessResponse.<JwtResponse>builder()
-                            .status(HttpStatus.OK.value())
-                            .message("Login successful")
-                            .data(jwtResponse)
-                            .build()
-            );
+        JwtResponse jwtResponse = userService.login(userLoginRequest.getPhoneNumber(), userLoginRequest.getPassword());
+        return responseUtil.createSuccessResponse(
+                jwtResponse,
+                "Login successful",
+                HttpStatus.OK
+        );
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SuccessResponse<?>> updateUser(
+    public ResponseEntity<SuccessResponse<UserResponse>> updateUser(
             @PathVariable(name = "id") Long id,
-            @Valid @RequestBody UserUpdateRequest userUpdateRequest){
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         UserResponse userResponse = userService.updateUser(id, userUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                SuccessResponse.builder()
-                        .status(HttpStatus.OK.value())
-                        .message("User was successfully updated")
-                        .data(userResponse)
-                        .build()
+        return responseUtil.createSuccessResponse(
+                userResponse,
+                "User was successfully updated",
+                HttpStatus.OK
         );
     }
 }

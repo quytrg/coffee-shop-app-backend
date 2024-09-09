@@ -8,6 +8,7 @@ import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
 import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,35 +24,32 @@ import org.springframework.web.bind.annotation.*;
 public class RoleController {
     private final RoleService roleService;
     private final PaginationUtil paginationUtil;
+    private final ResponseUtil responseUtil;
 
     @PostMapping()
-    public ResponseEntity<SuccessResponse<?>> createRole(@RequestBody @Valid RoleCreateRequest roleCreateRequest) {
+    public ResponseEntity<SuccessResponse<RoleResponse>> createRole(@RequestBody @Valid RoleCreateRequest roleCreateRequest) {
         RoleResponse roleResponse = roleService.createRole(roleCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                SuccessResponse.builder()
-                        .status(HttpStatus.CREATED.value())
-                        .message("Role was successfully created")
-                        .data(roleResponse)
-                        .build()
+        return responseUtil.createSuccessResponse(
+                roleResponse,
+                "Role was successfully created",
+                HttpStatus.CREATED
         );
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SuccessResponse<?>> updateRole(
+    public ResponseEntity<SuccessResponse<RoleResponse>> updateRole(
             @PathVariable(name = "id") Long id,
             @RequestBody @Valid RoleUpdateRequest roleUpdateRequest) {
         RoleResponse roleResponse = roleService.updateRole(id, roleUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                SuccessResponse.builder()
-                        .status(HttpStatus.OK.value())
-                        .message("Role was successfully updated")
-                        .data(roleResponse)
-                        .build()
+        return responseUtil.createSuccessResponse(
+                roleResponse,
+                "Role was successfully updated",
+                HttpStatus.OK
         );
     }
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<PaginationResponse<?>>> getAllRoles(
+    public ResponseEntity<SuccessResponse<PaginationResponse<RoleSummaryResponse>>> getAllRoles(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
         // validate page and size
@@ -69,12 +67,10 @@ public class RoleController {
                 roleSummaryResponsePage, page, size
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                SuccessResponse.<PaginationResponse<?>>builder()
-                        .status(HttpStatus.OK.value())
-                        .message("Retrieve all roles successfully")
-                        .data(paginationResponse)
-                        .build()
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve all roles successfully",
+                HttpStatus.OK
         );
     }
 }

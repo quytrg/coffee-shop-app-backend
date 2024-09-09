@@ -3,7 +3,9 @@ package com.project.coffeeshopapp.controlleradvices;
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
+import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,24 +15,29 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final ResponseUtil responseUtil;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("An unexpected error occurred.")
-                .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
                         .field("system")
                         .message(ex.getMessage())
-                        .build()))
-                .build();
+                        .build()
+        );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return responseUtil.createErrorResponse(
+                "An unexpected error occurred.",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                errorDetails
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,13 +51,11 @@ public class GlobalExceptionHandler {
                         .build())
                 .toList();
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("Validation failed")
-                .errors(errorDetails)
-                .build();
-
-        return ResponseEntity.badRequest().body(errorResponse);
+        return responseUtil.createErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -63,107 +68,103 @@ public class GlobalExceptionHandler {
                         .build())
                 .toList();
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("Validation failed")
-                .errors(errorDetails)
-                .build();
-
-        return ResponseEntity.badRequest().body(errorResponse);
+        return responseUtil.createErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
     }
 
     // handle exceptions that be thrown due to violate data constraints of database
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ResponseEntity.badRequest().body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .message("Data constraints violation")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("Unknown")
-                                .message(ex.getMostSpecificCause().getMessage())
-                                .build()))
-                        .build());
-    }
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("Unknown") // Hoặc bạn có thể tinh chỉnh trường này nếu có thể
+                        .message(ex.getMostSpecificCause().getMessage())
+                        .build()
+        );
 
-//    @ExceptionHandler(PasswordMismatchException.class)
-//    public ResponseEntity<ErrorResponse> handlePasswordMismatchException(PasswordMismatchException ex) {
-//        return ResponseEntity.badRequest().body(
-//                ErrorResponse.builder()
-//                        .status(HttpStatus.BAD_REQUEST.value())
-//                        .message("Failed to create user")
-//                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-//                                .field("retype_password")
-//                                .message(ex.getMessage())
-//                                .build()))
-//                        .build()
-//        );
-//    }
+        return responseUtil.createErrorResponse(
+                "Data constraints violation",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.UNAUTHORIZED.value())
-                        .message("Authentication failed")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("phoneNumber or password")
-                                .message("Invalid phone number or password")
-                                .build()))
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("phoneNumber or password")
+                        .message("Invalid phone number or password")
                         .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Authentication failed",
+                HttpStatus.UNAUTHORIZED,
+                errorDetails
         );
     }
 
     @ExceptionHandler(InvalidParamException.class)
     public ResponseEntity<ErrorResponse> handleInvalidParamException(InvalidParamException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                        .message("Invalid parameters provided")
-                        .build()
+        List<ErrorResponse.ErrorDetail> errorDetails = new ArrayList<>();
+        return responseUtil.createErrorResponse(
+                "Invalid parameters provided",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
         );
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.NOT_FOUND.value())
-                        .message("User not found")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("phoneNumber")
-                                .message(ex.getMessage())
-                                .build()))
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("phoneNumber")
+                        .message(ex.getMessage())
                         .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "User not found",
+                HttpStatus.NOT_FOUND,
+                errorDetails
         );
     }
 
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(DataNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.NOT_FOUND.value())
-                        .message("Data not found")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field(ex.getEntityName())
-                                .message(ex.getMessage())
-                                .build()))
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field(ex.getEntityName())
+                        .message(ex.getMessage())
                         .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Data not found",
+                HttpStatus.NOT_FOUND,
+                errorDetails
         );
     }
 
     // handle page < 0 or size <= 0
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.badRequest().body(
-                ErrorResponse.builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .message("Data constraints violation")
-                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
-                                .field("page or size")
-                                .message(ex.getMessage())
-                                .build()))
-                        .build());
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("page or size")
+                        .message(ex.getMessage())
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Data constraints violation",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
     }
 
 }
