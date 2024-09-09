@@ -7,6 +7,7 @@ import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
 import com.project.coffeeshopapp.services.role.RoleService;
+import com.project.coffeeshopapp.utils.PaginationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.prefix}/roles")
 public class RoleController {
     private final RoleService roleService;
+    private final PaginationUtil paginationUtil;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<?>> createRole(@RequestBody @Valid RoleCreateRequest roleCreateRequest) {
@@ -63,15 +65,9 @@ public class RoleController {
         );
         Page<RoleSummaryResponse> roleSummaryResponsePage = roleService.getAllRoles(pageRequest);
 
-        PaginationResponse<RoleSummaryResponse> paginationResponse = PaginationResponse.<RoleSummaryResponse>builder()
-                .content(roleSummaryResponsePage.getContent())
-                .page(PaginationResponse.PageInfo.builder()
-                        .number(page)
-                        .size(size)
-                        .totalElements(roleSummaryResponsePage.getTotalElements())
-                        .totalPages(roleSummaryResponsePage.getTotalPages())
-                        .build())
-                .build();
+        PaginationResponse<RoleSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                roleSummaryResponsePage, page, size
+        );
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 SuccessResponse.<PaginationResponse<?>>builder()
