@@ -4,12 +4,15 @@ import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.role.RoleCreateRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
+import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
 import com.project.coffeeshopapp.mappers.RoleMapper;
 import com.project.coffeeshopapp.models.Permission;
 import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.repositories.PermissionRepository;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +54,11 @@ public class RoleService implements IRoleService {
 
         Role updatedRole = roleRepository.save(role);
         return roleMapper.roleToRoleResponse(updatedRole);
+    }
+
+    @Override
+    public Page<RoleSummaryResponse> getAllRoles(Pageable pageable) {
+        Page<Role> rolePage = roleRepository.findAll(pageable);
+        return rolePage.map(roleMapper::roleToRoleSummaryResponse);
     }
 }

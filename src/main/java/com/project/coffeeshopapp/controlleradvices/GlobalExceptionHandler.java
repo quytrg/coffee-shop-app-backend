@@ -152,6 +152,18 @@ public class GlobalExceptionHandler {
         );
     }
 
-
+    // handle page < 0 or size <= 0
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(
+                ErrorResponse.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .message("Data constraints violation")
+                        .errors(Collections.singletonList(ErrorResponse.ErrorDetail.builder()
+                                .field("page or size")
+                                .message(ex.getMessage())
+                                .build()))
+                        .build());
+    }
 
 }
