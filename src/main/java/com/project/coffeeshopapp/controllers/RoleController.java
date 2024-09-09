@@ -10,6 +10,7 @@ import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,6 +71,17 @@ public class RoleController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve all roles successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<RoleResponse>> getRoleWithPermissions(
+            @PathVariable(name = "id") Long id) {
+        RoleResponse roleResponse = roleService.getRoleWithPermissions(id);
+        return responseUtil.createSuccessResponse(
+                roleResponse,
+                "Get role successfully",
                 HttpStatus.OK
         );
     }

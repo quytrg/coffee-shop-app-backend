@@ -13,4 +13,5 @@ public interface IRoleService {
     RoleResponse createRole(RoleCreateRequest roleCreateRequest);
     RoleResponse updateRole(Long id, RoleUpdateRequest roleUpdateRequest);
     Page<RoleSummaryResponse> getAllRoles(Pageable pageable);
+    RoleResponse getRoleWithPermissions(Long id);
 }

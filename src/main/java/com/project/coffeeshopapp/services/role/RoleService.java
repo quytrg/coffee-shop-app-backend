@@ -61,4 +61,11 @@ public class RoleService implements IRoleService {
         Page<Role> rolePage = roleRepository.findAll(pageable);
         return rolePage.map(roleMapper::roleToRoleSummaryResponse);
     }
+
+    @Override
+    public RoleResponse getRoleWithPermissions(Long id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
+        return roleMapper.roleToRoleResponse(role);
+    }
 }
