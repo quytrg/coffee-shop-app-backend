@@ -87,4 +87,13 @@ public class UserController {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteUser(@PathVariable(name = "id") Long id) {
+        userService.softDeleteUser(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "User successfully deleted",
+                HttpStatus.OK
+        );
+    }
 }

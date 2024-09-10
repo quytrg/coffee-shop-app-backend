@@ -83,4 +83,12 @@ public class UserService implements IUserService {
         return userPage.map(userMapper::userToUserSummaryResponse);
     }
 
+    @Transactional
+    @Override
+    public void softDeleteUser(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("user" ,"User not found with id: " + id));
+        userRepository.softDelete(id);
+    }
+
 }
