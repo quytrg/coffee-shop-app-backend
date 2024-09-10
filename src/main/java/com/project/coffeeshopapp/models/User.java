@@ -43,4 +43,8 @@ public class User extends BaseEntity {
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable=false)
+    private Role role;
 }
