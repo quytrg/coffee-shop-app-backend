@@ -4,16 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "roles")
+@Entity
+@Table(name = "roles")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Where(clause = "deleted=false")
 public class Role extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

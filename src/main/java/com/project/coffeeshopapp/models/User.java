@@ -2,6 +2,8 @@ package com.project.coffeeshopapp.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
+
 import java.util.Date;
 
 @Entity
@@ -10,7 +12,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Where(clause = "deleted=false")
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

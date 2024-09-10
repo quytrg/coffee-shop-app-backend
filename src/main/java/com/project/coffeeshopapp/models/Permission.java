@@ -4,12 +4,12 @@ import lombok.*;
 
 import java.util.Set;
 
-@Entity(name = "permissions")
+@Entity
+@Table(name = "permissions")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

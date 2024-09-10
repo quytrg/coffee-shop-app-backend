@@ -5,19 +5,24 @@ import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
+import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
 import com.project.coffeeshopapp.mappers.UserMapper;
 import com.project.coffeeshopapp.models.CustomUserDetails;
+import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.UserRepository;
 import com.project.coffeeshopapp.utils.JwtUtil;
 import com.project.coffeeshopapp.validationservices.user.IUserValidationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -69,6 +74,13 @@ public class UserService implements IUserService {
         // save update
         User updatedUser = userRepository.save(user);
         return userMapper.userToUserResponse(updatedUser);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<UserSummaryResponse> getAllUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage.map(userMapper::userToUserSummaryResponse);
     }
 
 }

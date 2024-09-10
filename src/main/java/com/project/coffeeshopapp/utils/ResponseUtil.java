@@ -29,4 +29,13 @@ public class ResponseUtil {
                         .build()
         );
     }
+
+    public ResponseEntity<SuccessResponse<?>> createSuccessResponseWithoutData(String message, HttpStatus status) {
+        return ResponseEntity.status(status).body(
+                SuccessResponse.builder()
+                        .status(status.value())
+                        .message(message)
+                        .build()
+        );
+    }
 }
