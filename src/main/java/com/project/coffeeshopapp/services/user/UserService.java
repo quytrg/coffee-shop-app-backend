@@ -10,6 +10,7 @@ import com.project.coffeeshopapp.mappers.UserMapper;
 import com.project.coffeeshopapp.models.CustomUserDetails;
 import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
+import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.repositories.UserRepository;
 import com.project.coffeeshopapp.utils.JwtUtil;
 import com.project.coffeeshopapp.validationservices.user.IUserValidationService;
@@ -36,13 +37,19 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final RoleRepository roleRepository;
 
     @Override
     public UserResponse createUser(UserCreateRequest userCreateRequest){
+        // check if roleId exists
+        Role role = roleRepository.findById(userCreateRequest.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + userCreateRequest.getRoleId()));
         // convert from userCreateRequest to User
         User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
         // encode password
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        // set role for user
+        newUser.setRole(role);
         // save the new user
         User createdUser = userRepository.save(newUser);
         // convert from User to UserResponse

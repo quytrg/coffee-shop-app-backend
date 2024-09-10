@@ -14,14 +14,18 @@ import org.mapstruct.*;
 public interface UserMapper {
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(target = "isActive", source = "isActive", defaultExpression = "java(true)")
+    @Mapping(target = "role", ignore = true)
     User userCreateRequestToUser(UserCreateRequest userCreateRequest);
 
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     UserResponse userToUserResponse(User user);
+    //  mapping beans as child beans of User and UserResponse (Role -> RoleSummaryResponse)
+    RoleSummaryResponse roleToRoleSummaryResponse(Role role);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
     void userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, @MappingTarget User user);
 
     UserSummaryResponse userToUserSummaryResponse(User user);
+
 }

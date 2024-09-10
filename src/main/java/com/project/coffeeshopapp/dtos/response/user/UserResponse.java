@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.dtos.response.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,5 @@ public class UserResponse {
 
     private String dateOfBirth;
 
-    private Long roleId;
+    private RoleSummaryResponse role;
 }
