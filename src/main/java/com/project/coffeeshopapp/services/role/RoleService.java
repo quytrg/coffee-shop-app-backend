@@ -10,10 +10,7 @@ import com.project.coffeeshopapp.models.Permission;
 import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.repositories.PermissionRepository;
 import com.project.coffeeshopapp.repositories.RoleRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -59,7 +56,7 @@ public class RoleService implements IRoleService {
         return roleMapper.roleToRoleResponse(updatedRole);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Page<RoleSummaryResponse> getAllRoles(Pageable pageable) {
         Page<Role> rolePage = roleRepository.findAll(pageable);
@@ -76,7 +73,7 @@ public class RoleService implements IRoleService {
     @Transactional
     @Override
     public void softDeleteRole(Long id) {
-        Role role = roleRepository.findById(id)
+        roleRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
         roleRepository.softDelete(id);
     }

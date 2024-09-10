@@ -10,6 +10,7 @@ import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,10 +18,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("${api.prefix}/roles")
 public class RoleController {
     private final RoleService roleService;
@@ -51,13 +54,8 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PaginationResponse<RoleSummaryResponse>>> getAllRoles(
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        // validate page and size
-        if (page < 0 || size <= 0) {
-            throw new IllegalArgumentException("page and size must be non-negative.");
-        }
-
+            @RequestParam(name = "page", defaultValue = "0") @Min(0) Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
         PageRequest pageRequest = PageRequest.of(
                 page, size,
                 Sort.by("name")
@@ -82,6 +80,15 @@ public class RoleController {
         return responseUtil.createSuccessResponse(
                 roleResponse,
                 "Get role successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteRole(@PathVariable(name = "id") Long id) {
+        roleService.softDeleteRole(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Role successfully deleted",
                 HttpStatus.OK
         );
     }
