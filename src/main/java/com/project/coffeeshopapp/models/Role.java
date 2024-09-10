@@ -4,15 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "roles")
+@Entity
+@Table(name = "roles")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Where(clause = "deleted=false")
 @Builder
 public class Role extends BaseEntity {
     @Id

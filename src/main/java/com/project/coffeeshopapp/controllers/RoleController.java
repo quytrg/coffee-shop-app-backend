@@ -10,7 +10,6 @@ import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,4 +84,14 @@ public class RoleController {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteRole(@PathVariable(name = "id") Long id) {
+        roleService.softDeleteRole(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Role successfully deleted",
+                HttpStatus.OK
+        );
+    }
+
 }

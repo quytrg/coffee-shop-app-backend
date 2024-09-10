@@ -4,7 +4,8 @@ import lombok.*;
 
 import java.util.Set;
 
-@Entity(name = "permissions")
+@Entity
+@Table(name = "permissions")
 @Getter
 @Setter
 @NoArgsConstructor
