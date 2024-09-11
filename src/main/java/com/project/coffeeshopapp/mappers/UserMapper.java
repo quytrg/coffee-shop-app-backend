@@ -24,6 +24,7 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", ignore = true)
     void userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, @MappingTarget User user);
 
     UserSummaryResponse userToUserSummaryResponse(User user);

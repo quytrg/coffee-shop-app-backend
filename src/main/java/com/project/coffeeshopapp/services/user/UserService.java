@@ -75,6 +75,13 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
         // convert userUpdateRequest to user
         userMapper.userUpdateRequestToUser(userUpdateRequest, user);
+        // update the role if roleId presents and exists
+        Optional.ofNullable(userUpdateRequest.getRoleId())
+                .ifPresent(roleId -> {
+                    Role role = roleRepository.findById(roleId)
+                            .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + roleId));
+                    user.setRole(role);
+                });
         // hash password if it presents
         Optional.ofNullable(userUpdateRequest.getPassword())
                 .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
