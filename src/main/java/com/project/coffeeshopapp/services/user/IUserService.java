@@ -14,4 +14,5 @@ public interface IUserService {
     UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest);
     Page<UserSummaryResponse> getAllUsers(Pageable pageable);
     void softDeleteUser(Long id);
+    UserResponse getUserById(Long id);
 }

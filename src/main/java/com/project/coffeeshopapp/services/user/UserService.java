@@ -105,4 +105,11 @@ public class UserService implements IUserService {
         userRepository.softDelete(id);
     }
 
+    @Override
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
+        return userMapper.userToUserResponse(user);
+    }
+
 }

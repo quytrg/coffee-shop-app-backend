@@ -5,6 +5,7 @@ import com.project.coffeeshopapp.dtos.request.user.UserLoginRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
+import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
@@ -93,6 +94,17 @@ public class UserController {
         userService.softDeleteUser(id);
         return responseUtil.createSuccessResponseWithoutData(
                 "User successfully deleted",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<UserResponse>> getUserById(
+            @PathVariable(name = "id") Long id) {
+        UserResponse userResponse = userService.getUserById(id);
+        return responseUtil.createSuccessResponse(
+                userResponse,
+                "Get user successfully",
                 HttpStatus.OK
         );
     }
