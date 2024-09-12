@@ -112,4 +112,28 @@ public class UserService implements IUserService {
         return userMapper.userToUserResponse(user);
     }
 
+    @Transactional
+    @Override
+    public void activateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
+        if (Boolean.TRUE.equals(user.getIsActive())) {
+            throw new IllegalStateException("User is already active");
+        }
+        user.setIsActive(Boolean.TRUE);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
+        if (Boolean.FALSE.equals(user.getIsActive())) {
+            throw new IllegalStateException("User is already inactive");
+        }
+        user.setIsActive(Boolean.FALSE);
+        userRepository.save(user);
+    }
+
 }
