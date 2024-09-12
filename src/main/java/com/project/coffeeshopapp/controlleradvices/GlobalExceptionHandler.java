@@ -167,4 +167,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("N/A")
+                        .message(ex.getMessage())
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Data constraints violation",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
+
 }

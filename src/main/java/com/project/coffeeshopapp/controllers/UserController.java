@@ -108,4 +108,24 @@ public class UserController {
                 HttpStatus.OK
         );
     }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<SuccessResponse<?>> activateUser(
+            @PathVariable(name = "id") Long id) {
+        userService.activateUser(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "User activated successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<SuccessResponse<?>> deactivateUser(
+            @PathVariable(name = "id") Long id) {
+        userService.deactivateUser(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "User deactivated successfully",
+                HttpStatus.OK
+        );
+    }
 }
