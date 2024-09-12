@@ -19,7 +19,7 @@ public interface UserMapper {
 
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     UserResponse userToUserResponse(User user);
-    //  mapping beans as child beans of User and UserResponse (Role -> RoleSummaryResponse)
+    //  mapping beans as child beans Role -> RoleSummaryResponse
     RoleSummaryResponse roleToRoleSummaryResponse(Role role);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
