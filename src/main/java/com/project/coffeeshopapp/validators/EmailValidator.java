@@ -18,6 +18,10 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
     }
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context){
+        // in case update does not have email field
+        if (email == null) {
+            return true;
+        }
         return (validateEmail(email));
     }
     private boolean validateEmail(String email) {

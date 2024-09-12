@@ -2,6 +2,8 @@ package com.project.coffeeshopapp.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
+
 import java.util.Date;
 
 @Entity
@@ -10,6 +12,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Where(clause = "deleted=false")
 @Builder
 public class User extends BaseEntity {
     @Id
@@ -40,4 +43,8 @@ public class User extends BaseEntity {
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable=false)
+    private Role role;
 }
