@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.category.CategoryCreateRequest;
+import com.project.coffeeshopapp.dtos.request.category.CategoryUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.category.CategoryResponse;
 import com.project.coffeeshopapp.services.category.ICategoryService;
@@ -11,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +30,18 @@ public class CategoryController {
                 categoryResponse,
                 "Category was successfully created",
                 HttpStatus.CREATED
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<CategoryResponse>> updateCategory(
+            @PathVariable(name = "id") Long id,
+            @RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest) {
+        CategoryResponse categoryResponse = categoryService.updateCategory(id, categoryUpdateRequest);
+        return responseUtil.createSuccessResponse(
+                categoryResponse,
+                "Category was successfully updated",
+                HttpStatus.OK
         );
     }
 }

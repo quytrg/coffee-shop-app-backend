@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.services.category;
 
+import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.category.CategoryCreateRequest;
+import com.project.coffeeshopapp.dtos.request.category.CategoryUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.category.CategoryResponse;
 import com.project.coffeeshopapp.mappers.CategoryMapper;
 import com.project.coffeeshopapp.models.Category;
@@ -21,5 +23,15 @@ public class CategoryService implements ICategoryService {
         Category newCategory = categoryMapper.categoryCreateRequestToCategory(categoryCreateRequest);
         Category savedCategory = categoryRepository.save(newCategory);
         return categoryMapper.categoryToCategoryResponse(savedCategory);
+    }
+
+    @Override
+    @Transactional
+    public CategoryResponse updateCategory(Long id, CategoryUpdateRequest categoryUpdateRequest) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
+        categoryMapper.categoryUpdateRequestToCategory(categoryUpdateRequest, category);
+        Category updatedCategory = categoryRepository.save(category);
+        return categoryMapper.categoryToCategoryResponse(updatedCategory);
     }
 }
