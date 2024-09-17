@@ -6,7 +6,7 @@ import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
-import com.project.coffeeshopapp.services.role.RoleService;
+import com.project.coffeeshopapp.services.role.IRoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequestMapping("${api.prefix}/roles")
 public class RoleController {
-    private final RoleService roleService;
+    private final IRoleService roleService;
     private final PaginationUtil paginationUtil;
     private final ResponseUtil responseUtil;
 

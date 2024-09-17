@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.controlleradvices;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.InvalidEnumValueException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
 import com.project.coffeeshopapp.utils.ResponseUtil;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -183,4 +186,59 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Generic handler for deserialization errors while processing the request
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        if (ex.getCause() instanceof InvalidFormatException invalidFormatException) {
+
+            // Check if the field causing the issue is related to enum deserialization
+            if (invalidFormatException.getTargetType().isEnum()) {
+                String invalidValue = invalidFormatException.getValue().toString();
+                String fieldName = invalidFormatException.getPath().get(0).getFieldName();
+
+                // Generic error detail for enum violation without exposing allowed values
+                List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                        ErrorResponse.ErrorDetail.builder()
+                                .field(fieldName)
+                                .message("Invalid value '" + invalidValue + "' for field '" + fieldName + "'.")
+                                .build()
+                );
+
+                return responseUtil.createErrorResponse(
+                        "Invalid request body.",
+                        HttpStatus.BAD_REQUEST,
+                        errorDetails
+                );
+            }
+        }
+
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("system")
+                        .message("An error occurred while processing the request.")
+                        .build()
+        );
+        // Handle other HttpMessageNotReadableException causes
+        return responseUtil.createErrorResponse(
+                "Invalid request body.",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
+
+//    @ExceptionHandler(InvalidEnumValueException.class)
+//    public ResponseEntity<ErrorResponse> handleInvalidEnumValueException(InvalidEnumValueException ex) {
+//        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+//                ErrorResponse.ErrorDetail.builder()
+//                        .field(ex.getFieldName())
+//                        .message(ex.getMessage())
+//                        .build()
+//        );
+//        // Handle other HttpMessageNotReadableException causes
+//        return responseUtil.createErrorResponse(
+//                "Invalid request body.",
+//                HttpStatus.BAD_REQUEST,
+//                errorDetails
+//        );
+//    }
 }
