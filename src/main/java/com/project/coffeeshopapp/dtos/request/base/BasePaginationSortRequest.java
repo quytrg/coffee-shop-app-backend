@@ -4,12 +4,11 @@ import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.enums.SortField;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -21,6 +20,8 @@ public abstract class BasePaginationSortRequest<T extends SortField> {
     @Positive(message = "Size must be greater than zero")
     private Integer size;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<T> sortBy = Collections.emptyList();
 
     private List<SortDirection> sortDir = Collections.singletonList(SortDirection.ASC);
@@ -28,9 +29,13 @@ public abstract class BasePaginationSortRequest<T extends SortField> {
     // Add a method to get sortBy, ensuring it's initialized if null or empty
     public List<T> getSortBy() {
         if (sortBy == null || sortBy.isEmpty()) {
-            return initSortBy();  // Call the method to set the default sortBy
+            setSortBy(initSortBy()); // Call the method to set the default sortBy
         }
         return sortBy;
+    }
+
+    public void setSortBy(List<T> sortBy) {
+        this.sortBy = (sortBy != null && !sortBy.isEmpty()) ? sortBy : initSortBy();
     }
 
     /**
