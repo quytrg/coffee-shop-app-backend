@@ -2,7 +2,6 @@ package com.project.coffeeshopapp.dtos.request.base;
 
 import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.enums.SortField;
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -26,15 +25,18 @@ public abstract class BasePaginationSortRequest<T extends SortField> {
 
     private List<SortDirection> sortDir = Collections.singletonList(SortDirection.ASC);
 
-    @PostConstruct
-    public void initialize() {
-        initSortBy();
+    // Add a method to get sortBy, ensuring it's initialized if null or empty
+    public List<T> getSortBy() {
+        if (sortBy == null || sortBy.isEmpty()) {
+            return initSortBy();  // Call the method to set the default sortBy
+        }
+        return sortBy;
     }
 
     /**
      * Abstract method to initialize sortBy.
      * Each subclass must provide its own implementation.
      */
-    protected abstract void initSortBy();
+    protected abstract List<T> initSortBy();
 }
 
