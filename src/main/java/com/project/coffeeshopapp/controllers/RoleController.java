@@ -63,7 +63,7 @@ public class RoleController {
         Page<RoleSummaryResponse> roleSummaryResponsePage = roleService.getAllRoles(pageRequest);
 
         PaginationResponse<RoleSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
-                roleSummaryResponsePage, page, size
+                roleSummaryResponsePage
         );
 
         return responseUtil.createSuccessResponse(

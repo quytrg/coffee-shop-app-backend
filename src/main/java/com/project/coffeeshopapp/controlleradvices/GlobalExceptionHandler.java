@@ -2,30 +2,78 @@ package com.project.coffeeshopapp.controlleradvices;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
-import com.project.coffeeshopapp.customexceptions.InvalidEnumValueException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
+import com.project.coffeeshopapp.enums.CategorySortField;
+import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final ResponseUtil responseUtil;
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        String parameterName = ex.getName();
+        String invalidValue = ex.getValue().toString();
+        String expectedType = ex.getRequiredType().getSimpleName();
+
+        String errorMessage = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s.",
+                invalidValue, parameterName, expectedType);
+
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field(parameterName)
+                        .message(errorMessage)
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Invalid parameter value.",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorResponse> handleBindException(BindException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> ErrorResponse.ErrorDetail.builder()
+                        .field(fieldError.getField())
+                        .message(fieldError.getDefaultMessage())
+                        .build())
+                .collect(Collectors.toList());
+
+        return responseUtil.createErrorResponse(
+                "Invalid request parameters.",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
@@ -45,14 +93,39 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        List<ErrorResponse.ErrorDetail> errorDetails = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> ErrorResponse.ErrorDetail.builder()
-                        .field(fieldError.getField())
-                        .message(fieldError.getDefaultMessage())
-                        .build())
-                .toList();
+        BindingResult bindingResult = ex.getBindingResult();
+        List<ErrorResponse.ErrorDetail> errorDetails = new ArrayList<>();
+
+        bindingResult.getFieldErrors().forEach(fieldError -> {
+            String message = fieldError.getDefaultMessage();
+
+            // Check if error relate to type data error
+            if (fieldError.getCode().equals(TypeMismatchException.ERROR_CODE)) {
+                if (fieldError.getField().equals("sortDir")) {
+                    message = String.format("Invalid value '%s' for parameter '%s'. Expected one of: %s.",
+                            fieldError.getRejectedValue(),
+                            fieldError.getField(),
+                            Arrays.stream(SortDirection.values())
+                                    .map(SortDirection::getValue)
+                                    .collect(Collectors.joining(", "))
+                    );
+                }
+                if (fieldError.getField().equals("sortBy")) {
+                    message = String.format("Invalid value '%s' for parameter '%s'. Expected one of: %s.",
+                            fieldError.getRejectedValue(),
+                            fieldError.getField(),
+                            Arrays.stream(CategorySortField.values())
+                                    .map(CategorySortField::getValue)
+                                    .collect(Collectors.joining(", "))
+                    );
+                }
+            }
+
+            errorDetails.add(ErrorResponse.ErrorDetail.builder()
+                    .field(fieldError.getField())
+                    .message(message)
+                    .build());
+        });
 
         return responseUtil.createErrorResponse(
                 "Validation failed",
@@ -60,6 +133,7 @@ public class GlobalExceptionHandler {
                 errorDetails
         );
     }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
@@ -153,18 +227,17 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // handle page < 0 or size <= 0
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
                 ErrorResponse.ErrorDetail.builder()
-                        .field("page or size")
+                        .field("N/A")
                         .message(ex.getMessage())
                         .build()
         );
 
         return responseUtil.createErrorResponse(
-                "Data constraints violation",
+                "Invalid parameter value.",
                 HttpStatus.BAD_REQUEST,
                 errorDetails
         );

@@ -79,7 +79,7 @@ public class UserController {
         Page<UserSummaryResponse> userSummaryResponsePage = userService.getAllUsers(pageRequest);
 
         PaginationResponse<UserSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
-                userSummaryResponsePage, page, size
+                userSummaryResponsePage
         );
 
         return responseUtil.createSuccessResponse(

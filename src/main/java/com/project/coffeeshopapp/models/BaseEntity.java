@@ -18,7 +18,7 @@ import java.util.Date;
 public class BaseEntity {
     @Column(name = "created_at", updatable = false)
     @CreatedDate
-    private Date createdDate;
+    private Date createdAt;
 
     @Column(name = "created_by", updatable = false)
     @CreatedBy
@@ -26,11 +26,11 @@ public class BaseEntity {
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private Date updatedAt;
 
     @Column(name = "updated_by")
     @LastModifiedBy
-    private String lastModifiedBy;
+    private String updatedBy;
 
     @Column(name = "deleted")
     private Boolean deleted = Boolean.FALSE;
