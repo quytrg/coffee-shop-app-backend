@@ -1,5 +1,6 @@
 package com.project.coffeeshopapp.configurations;
 
+import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.models.CustomUserDetails;
 import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.UserRepository;
@@ -27,7 +28,7 @@ public class SecurityConfig {
         // -> use lambda expression to implement its a simple implementations
         return phoneNumber -> {
             User user = userRepository
-                    .findByPhoneNumberAndIsActiveAndDeleted(phoneNumber, true, false)
+                    .findByPhoneNumberAndStatusAndDeleted(phoneNumber, UserStatus.ACTIVE, false)
                     .orElseThrow(() ->
                             new UsernameNotFoundException(
                                     "Cannot find user with phone number = " + phoneNumber));

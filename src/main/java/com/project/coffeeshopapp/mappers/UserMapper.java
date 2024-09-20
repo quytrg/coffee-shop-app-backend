@@ -13,7 +13,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
-    @Mapping(target = "isActive", source = "isActive", defaultExpression = "java(true)")
     @Mapping(target = "role", ignore = true)
     User userCreateRequestToUser(UserCreateRequest userCreateRequest);
 

@@ -3,6 +3,7 @@ package com.project.coffeeshopapp.dtos.request.user;
 import com.project.coffeeshopapp.customannotations.PasswordMatches;
 import com.project.coffeeshopapp.customannotations.UniquePhoneNumber;
 import com.project.coffeeshopapp.customannotations.ValidEmail;
+import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.validationservices.contracts.PasswordMatchingCheckable;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class UserUpdateRequest implements PasswordMatchingCheckable {
     @Size(min = 4, max = 50, message = "Retype password length must be between {min} and {max} characters")
     private String retypePassword;
 
-    private Boolean isActive;
+    private UserStatus status;
 
     private Boolean sex;
 

@@ -3,13 +3,14 @@ package com.project.coffeeshopapp.dtos.request.user;
 import com.project.coffeeshopapp.customannotations.PasswordMatches;
 import com.project.coffeeshopapp.customannotations.UniquePhoneNumber;
 import com.project.coffeeshopapp.customannotations.ValidEmail;
+import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.validationservices.contracts.PasswordMatchingCheckable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -40,7 +41,8 @@ public class UserCreateRequest implements PasswordMatchingCheckable {
     @Size(min = 4, max = 50)
     private String retypePassword;
 
-    private Boolean isActive;
+    @NotNull(message = "User status is required")
+    private UserStatus status;
 
     private Boolean sex;
 

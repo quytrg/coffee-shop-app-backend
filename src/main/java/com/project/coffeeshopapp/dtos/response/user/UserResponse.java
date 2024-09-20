@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.dtos.response.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
+import com.project.coffeeshopapp.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class UserResponse {
 
     private String address;
 
-    private Boolean isActive;
+    private UserStatus status;
 
     private Boolean sex;
 

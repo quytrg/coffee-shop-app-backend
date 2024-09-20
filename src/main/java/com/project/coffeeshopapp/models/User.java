@@ -1,5 +1,6 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
@@ -34,8 +35,9 @@ public class User extends BaseEntity {
     @Column(name = "password", length = 100, nullable = false)
     private String password;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Column(name = "sex")
     private Boolean sex;
