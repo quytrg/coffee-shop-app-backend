@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString(callSuper = true)
 public abstract class BasePaginationSortRequest<T extends SortField> {
     @Min(value = 0, message = "Page index must not be less than zero")
     private Integer page = 0;

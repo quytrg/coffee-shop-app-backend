@@ -3,18 +3,14 @@ package com.project.coffeeshopapp.dtos.request.category;
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
 import com.project.coffeeshopapp.enums.CategorySortField;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class CategorySearchRequest extends BasePaginationSortRequest<CategorySortField> {
     // Additional search-specific fields
     private String keyword;
