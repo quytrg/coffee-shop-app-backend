@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.services.user;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
+import com.project.coffeeshopapp.dtos.request.user.UserSearchRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
@@ -13,10 +14,13 @@ import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.repositories.UserRepository;
 import com.project.coffeeshopapp.utils.JwtUtil;
+import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.SortUtil;
 import com.project.coffeeshopapp.validationservices.user.IUserValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,12 +36,12 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final IUserValidationService userValidationService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
     private final RoleRepository roleRepository;
+    private final PaginationUtil paginationUtil;
+    private final SortUtil sortUtil;
 
     @Override
     public UserResponse createUser(UserCreateRequest userCreateRequest){
@@ -92,7 +96,16 @@ public class UserService implements IUserService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<UserSummaryResponse> getAllUsers(Pageable pageable) {
+    public Page<UserSummaryResponse> getAllUsers(UserSearchRequest request) {
+        Sort sort = sortUtil.createSort(
+                request.getSortBy(),
+                request.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                request.getPage(),
+                request.getSize(),
+                sort
+        );
         Page<User> userPage = userRepository.findAll(pageable);
         return userPage.map(userMapper::userToUserSummaryResponse);
     }

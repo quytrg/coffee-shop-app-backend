@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserLoginRequest;
+import com.project.coffeeshopapp.dtos.request.user.UserSearchRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
@@ -69,19 +70,11 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PaginationResponse<UserSummaryResponse>>> getAllUsers(
-            @RequestParam(name = "page", defaultValue = "0") @Min(0) Integer page,
-            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
-
-        PageRequest pageRequest = PageRequest.of(
-                page, size,
-                Sort.by("fullName")
-        );
-        Page<UserSummaryResponse> userSummaryResponsePage = userService.getAllUsers(pageRequest);
-
+            @Valid @ModelAttribute UserSearchRequest request) {
+        Page<UserSummaryResponse> userSummaryResponsePage = userService.getAllUsers(request);
         PaginationResponse<UserSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
                 userSummaryResponsePage
         );
-
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve all users successfully",
