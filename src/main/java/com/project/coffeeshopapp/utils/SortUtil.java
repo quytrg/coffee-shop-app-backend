@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.utils;
 
-import com.project.coffeeshopapp.enums.CategorySortField;
 import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.enums.SortField;
 import org.springframework.data.domain.Sort;
