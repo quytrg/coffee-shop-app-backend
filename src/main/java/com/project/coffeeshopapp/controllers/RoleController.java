@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.controllers;
 
-import com.project.coffeeshopapp.dtos.request.category.CategorySearchRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleCreateRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleSearchRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleUpdateRequest;
@@ -12,12 +11,8 @@ import com.project.coffeeshopapp.services.role.IRoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -84,6 +79,26 @@ public class RoleController {
         roleService.softDeleteRole(id);
         return responseUtil.createSuccessResponseWithoutData(
                 "Role successfully deleted",
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<SuccessResponse<?>> activateRole(
+            @PathVariable(name = "id") Long id) {
+        roleService.activateRole(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Role activated successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<SuccessResponse<?>> deactivateRole(
+            @PathVariable(name = "id") Long id) {
+        roleService.deactivateRole(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Role deactivated successfully",
                 HttpStatus.OK
         );
     }

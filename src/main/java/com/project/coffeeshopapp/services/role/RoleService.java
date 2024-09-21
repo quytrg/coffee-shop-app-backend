@@ -6,9 +6,12 @@ import com.project.coffeeshopapp.dtos.request.role.RoleSearchRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
+import com.project.coffeeshopapp.enums.RoleStatus;
+import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.mappers.RoleMapper;
 import com.project.coffeeshopapp.models.Permission;
 import com.project.coffeeshopapp.models.Role;
+import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.PermissionRepository;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.utils.PaginationUtil;
@@ -91,5 +94,29 @@ public class RoleService implements IRoleService {
         roleRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
         roleRepository.softDelete(id);
+    }
+
+    @Transactional
+    @Override
+    public void activateRole(Long id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + id));
+        if (role.getStatus().equals(RoleStatus.ACTIVE)) {
+            throw new IllegalStateException("Role is already active");
+        }
+        role.setStatus(RoleStatus.ACTIVE);
+        roleRepository.save(role);
+    }
+
+    @Transactional
+    @Override
+    public void deactivateRole(Long id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + id));
+        if (role.getStatus().equals(RoleStatus.INACTIVE)) {
+            throw new IllegalStateException("Role is already inactive");
+        }
+        role.setStatus(RoleStatus.INACTIVE);
+        roleRepository.save(role);
     }
 }

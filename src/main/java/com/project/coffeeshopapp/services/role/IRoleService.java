@@ -14,4 +14,6 @@ public interface IRoleService {
     Page<RoleSummaryResponse> getAllRoles(RoleSearchRequest request);
     RoleResponse getRoleWithPermissions(Long id);
     void softDeleteRole(Long id);
+    void activateRole(Long id);
+    void deactivateRole(Long id);
 }
