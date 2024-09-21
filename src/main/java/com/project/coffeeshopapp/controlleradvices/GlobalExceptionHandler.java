@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -33,6 +34,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final ResponseUtil responseUtil;
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("user")
+                        .message("User role is inactive")
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Authentication failed",
+                HttpStatus.UNAUTHORIZED,
+                errorDetails
+        );
+    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {

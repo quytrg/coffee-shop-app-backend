@@ -1,5 +1,7 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.RoleStatus;
+import com.project.coffeeshopapp.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,6 +55,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getStatus() == UserStatus.ACTIVE &&
+                user.getRole() != null &&
+                user.getRole().getStatus() == RoleStatus.ACTIVE;
     }
 }

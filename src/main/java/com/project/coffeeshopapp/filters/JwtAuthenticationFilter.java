@@ -59,6 +59,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String phoneNumber = jwtUtil.extractPhoneNumber(token);
             if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(phoneNumber);
+                if (customUserDetails != null && !customUserDetails.isEnabled()) {
+                    throw new UnauthorizedException("Unauthorized");
+                }
                 if(jwtUtil.validateToken(token, customUserDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
