@@ -61,4 +61,12 @@ public class CategoryService implements ICategoryService {
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         return categoryPage.map(categoryMapper::categoryToCategorySummaryResponse);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CategoryResponse getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
+        return categoryMapper.categoryToCategoryResponse(category);
+    }
 }

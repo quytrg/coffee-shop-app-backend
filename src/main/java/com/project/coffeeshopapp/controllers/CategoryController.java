@@ -9,6 +9,7 @@ import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.properties.PaginationProperties;
 import com.project.coffeeshopapp.services.category.ICategoryService;
+import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -28,6 +29,7 @@ public class CategoryController {
     private final PaginationUtil paginationUtil;
     private final ResponseUtil responseUtil;
     private final PaginationProperties paginationProperties;
+    private final RoleService roleService;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<CategoryResponse>> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest) {
@@ -61,6 +63,17 @@ public class CategoryController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve paginated categories successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<CategoryResponse>> getCategoryById(
+            @PathVariable(name = "id") Long id) {
+        CategoryResponse categoryResponse = categoryService.getCategoryById(id);
+        return responseUtil.createSuccessResponse(
+                categoryResponse,
+                "Get category successfully",
                 HttpStatus.OK
         );
     }
