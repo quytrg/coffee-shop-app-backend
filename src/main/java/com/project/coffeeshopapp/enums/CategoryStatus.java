@@ -13,7 +13,7 @@ public enum CategoryStatus {
     ACTIVE("Active"),
     INACTIVE("Inactive");
 
-    private final String statusName;
+    private final String value;
 
 //    // Cache enum values for performance (prevents repeated calls to values())
 //    private static final CategoryStatus[] CACHED_VALUES = values();

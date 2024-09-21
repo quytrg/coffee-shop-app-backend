@@ -74,7 +74,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findByIdAndStatusAndDeleted(id, UserStatus.ACTIVE, false)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
         // convert userUpdateRequest to user
         userMapper.userUpdateRequestToUser(userUpdateRequest, user);
