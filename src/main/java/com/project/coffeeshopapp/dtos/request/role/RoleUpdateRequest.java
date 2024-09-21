@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.dtos.request.role;
 
 import com.project.coffeeshopapp.customannotations.UniqueRoleName;
+import com.project.coffeeshopapp.enums.RoleStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -22,4 +23,6 @@ public class RoleUpdateRequest {
     // only check if permissionIds exists
     @Size(min = 1, message = "Permission ids must contain at least one value")
     private Set<Long> permissionIds;
+
+    private RoleStatus status;
 }
