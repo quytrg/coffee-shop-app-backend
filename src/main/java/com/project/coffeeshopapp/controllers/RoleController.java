@@ -82,24 +82,4 @@ public class RoleController {
                 HttpStatus.OK
         );
     }
-
-    @PatchMapping("/{id}/activate")
-    public ResponseEntity<SuccessResponse<?>> activateRole(
-            @PathVariable(name = "id") Long id) {
-        roleService.activateRole(id);
-        return responseUtil.createSuccessResponseWithoutData(
-                "Role activated successfully",
-                HttpStatus.OK
-        );
-    }
-
-    @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<SuccessResponse<?>> deactivateRole(
-            @PathVariable(name = "id") Long id) {
-        roleService.deactivateRole(id);
-        return responseUtil.createSuccessResponseWithoutData(
-                "Role deactivated successfully",
-                HttpStatus.OK
-        );
-    }
 }

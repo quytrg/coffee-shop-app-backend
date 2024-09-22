@@ -95,28 +95,4 @@ public class RoleService implements IRoleService {
                 .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
         roleRepository.softDelete(id);
     }
-
-    @Transactional
-    @Override
-    public void activateRole(Long id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + id));
-        if (role.getStatus().equals(RoleStatus.ACTIVE)) {
-            throw new IllegalStateException("Role is already active");
-        }
-        role.setStatus(RoleStatus.ACTIVE);
-        roleRepository.save(role);
-    }
-
-    @Transactional
-    @Override
-    public void deactivateRole(Long id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + id));
-        if (role.getStatus().equals(RoleStatus.INACTIVE)) {
-            throw new IllegalStateException("Role is already inactive");
-        }
-        role.setStatus(RoleStatus.INACTIVE);
-        roleRepository.save(role);
-    }
 }

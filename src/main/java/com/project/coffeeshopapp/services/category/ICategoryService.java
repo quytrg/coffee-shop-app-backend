@@ -14,6 +14,4 @@ public interface ICategoryService {
     Page<CategorySummaryResponse> getAllCategories(CategorySearchRequest request);
     CategoryResponse getCategoryById(Long id);
     void softDeleteCategory(Long id);
-    void activateCategory(Long id);
-    void deactivateCategory(Long id);
 }

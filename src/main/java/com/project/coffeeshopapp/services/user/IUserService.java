@@ -16,6 +16,4 @@ public interface IUserService {
     Page<UserSummaryResponse> getAllUsers(UserSearchRequest request);
     void softDeleteUser(Long id);
     UserResponse getUserById(Long id);
-    void activateUser(Long id);
-    void deactivateUser(Long id);
 }

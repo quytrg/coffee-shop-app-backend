@@ -75,28 +75,4 @@ public class CategoryService implements ICategoryService {
                 .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
         categoryRepository.softDelete(id);
     }
-
-    @Override
-    @Transactional
-    public void activateCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
-        if (category.getStatus().equals(CategoryStatus.ACTIVE)) {
-            throw new IllegalStateException("Category is already active");
-        }
-        category.setStatus(CategoryStatus.ACTIVE);
-        categoryRepository.save(category);
-    }
-
-    @Override
-    @Transactional
-    public void deactivateCategory(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
-        if (category.getStatus().equals(CategoryStatus.INACTIVE)) {
-            throw new IllegalStateException("Category is already inactive");
-        }
-        category.setStatus(CategoryStatus.INACTIVE);
-        categoryRepository.save(category);
-    }
 }
