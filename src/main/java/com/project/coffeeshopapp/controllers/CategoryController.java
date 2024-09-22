@@ -13,6 +13,7 @@ import com.project.coffeeshopapp.services.role.RoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,16 @@ public class CategoryController {
         return responseUtil.createSuccessResponse(
                 categoryResponse,
                 "Get category successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteCategory(
+            @PathVariable(name = "id") @PositiveOrZero Long id) {
+        categoryService.softDeleteCategory(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Category successfully deleted",
                 HttpStatus.OK
         );
     }
