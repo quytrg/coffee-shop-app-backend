@@ -6,6 +6,7 @@ import com.project.coffeeshopapp.dtos.request.category.CategorySearchRequest;
 import com.project.coffeeshopapp.dtos.request.category.CategoryUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.category.CategoryResponse;
 import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
+import com.project.coffeeshopapp.enums.CategoryStatus;
 import com.project.coffeeshopapp.mappers.CategoryMapper;
 import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
@@ -73,5 +74,29 @@ public class CategoryService implements ICategoryService {
         categoryRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
         categoryRepository.softDelete(id);
+    }
+
+    @Override
+    @Transactional
+    public void activateCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
+        if (category.getStatus().equals(CategoryStatus.ACTIVE)) {
+            throw new IllegalStateException("Category is already active");
+        }
+        category.setStatus(CategoryStatus.ACTIVE);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
+        if (category.getStatus().equals(CategoryStatus.INACTIVE)) {
+            throw new IllegalStateException("Category is already inactive");
+        }
+        category.setStatus(CategoryStatus.INACTIVE);
+        categoryRepository.save(category);
     }
 }

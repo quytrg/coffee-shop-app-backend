@@ -88,4 +88,24 @@ public class CategoryController {
                 HttpStatus.OK
         );
     }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<SuccessResponse<?>> activateCategory(
+            @PathVariable(name = "id") Long id) {
+        categoryService.activateCategory(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Category activated successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<SuccessResponse<?>> deactivateCategory(
+            @PathVariable(name = "id") Long id) {
+        categoryService.deactivateCategory(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Category deactivated successfully",
+                HttpStatus.OK
+        );
+    }
 }
