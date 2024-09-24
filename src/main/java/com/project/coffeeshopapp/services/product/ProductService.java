@@ -11,9 +11,7 @@ import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
-import com.project.coffeeshopapp.services.category.CategoryService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
-import com.project.coffeeshopapp.utils.ResponseUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -89,5 +87,13 @@ public class ProductService implements IProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("product", "Product not found with id: " + id));
         return productMapper.productToProductResponse(product);
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteProduct(Long id) {
+        productRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("product", "Product not found with id: " + id));
+        productRepository.softDelete(id);
     }
 }

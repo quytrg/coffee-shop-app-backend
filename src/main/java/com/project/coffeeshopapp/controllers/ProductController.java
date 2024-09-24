@@ -74,4 +74,14 @@ public class ProductController {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteProduct(
+            @PathVariable(name = "id") Long id) {
+        productService.softDeleteProduct(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Product successfully deleted",
+                HttpStatus.OK
+        );
+    }
 }

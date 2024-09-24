@@ -12,4 +12,5 @@ public interface IProductService {
     ProductResponse updateProduct(Long id, ProductUpdateRequest productUpdateRequest);
     Page<ProductSummaryResponse> getAllProducts(ProductSearchRequest request);
     ProductResponse getProductById(Long id);
+    void softDeleteProduct(Long id);
 }
