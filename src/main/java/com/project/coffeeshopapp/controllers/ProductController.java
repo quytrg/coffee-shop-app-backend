@@ -1,10 +1,9 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
-import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
+import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
-import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.services.product.ProductService;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -12,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +29,18 @@ public class ProductController {
                 productResponse,
                 "Product was created successfully",
                 HttpStatus.CREATED
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<ProductResponse>> updateProduct(
+            @PathVariable(name = "id") Long id,
+            @Valid @RequestBody ProductUpdateRequest productUpdateRequest) {
+        ProductResponse productResponse = productService.updateProduct(id, productUpdateRequest);
+        return responseUtil.createSuccessResponse(
+                productResponse,
+                "Product was updated successfully",
+                HttpStatus.OK
         );
     }
 }
