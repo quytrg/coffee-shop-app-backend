@@ -82,4 +82,12 @@ public class ProductService implements IProductService {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(productMapper::productToProductSummaryResponse);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductResponse getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("product", "Product not found with id: " + id));
+        return productMapper.productToProductResponse(product);
+    }
 }

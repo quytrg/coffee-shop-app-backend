@@ -11,4 +11,5 @@ public interface IProductService {
     ProductResponse createProduct(ProductCreateRequest productCreateRequest);
     ProductResponse updateProduct(Long id, ProductUpdateRequest productUpdateRequest);
     Page<ProductSummaryResponse> getAllProducts(ProductSearchRequest request);
+    ProductResponse getProductById(Long id);
 }

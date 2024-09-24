@@ -1,13 +1,12 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
-import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductSearchRequest;
+import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
-import com.project.coffeeshopapp.mappers.ProductMapper;
 import com.project.coffeeshopapp.services.product.ProductService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
@@ -61,6 +60,17 @@ public class ProductController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve paginated products successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<ProductResponse>> getProductById(
+            @PathVariable(name = "id") Long id) {
+        ProductResponse productResponse = productService.getProductById(id);
+        return responseUtil.createSuccessResponse(
+                productResponse,
+                "Get product successfully",
                 HttpStatus.OK
         );
     }
