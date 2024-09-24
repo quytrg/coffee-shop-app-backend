@@ -2,15 +2,23 @@ package com.project.coffeeshopapp.services.product;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
+import com.project.coffeeshopapp.dtos.request.product.ProductSearchRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
+import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
 import com.project.coffeeshopapp.mappers.ProductMapper;
 import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
 import com.project.coffeeshopapp.services.category.CategoryService;
+import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.ResponseUtil;
+import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +30,8 @@ public class ProductService implements IProductService {
     private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final PaginationUtil paginationUtil;
+    private final SortUtil sortUtil;
 
     @Override
     @Transactional
@@ -55,5 +65,21 @@ public class ProductService implements IProductService {
                 });
         productRepository.save(product);
         return productMapper.productToProductResponse(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductSummaryResponse> getAllProducts(ProductSearchRequest request) {
+        Sort sort = sortUtil.createSort(
+                request.getSortBy(),
+                request.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                request.getPage(),
+                request.getSize(),
+                sort
+        );
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(productMapper::productToProductSummaryResponse);
     }
 }

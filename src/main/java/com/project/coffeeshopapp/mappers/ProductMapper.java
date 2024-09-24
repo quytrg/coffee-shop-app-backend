@@ -4,6 +4,7 @@ import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
+import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
 import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.models.Product;
 import org.mapstruct.*;
@@ -20,4 +21,6 @@ public interface ProductMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", ignore = true)
     void productUpdateRequestToProduct(ProductUpdateRequest productUpdateRequest, @MappingTarget Product product);
+
+    ProductSummaryResponse productToProductSummaryResponse(Product product);
 }
