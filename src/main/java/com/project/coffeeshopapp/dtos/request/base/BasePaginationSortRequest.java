@@ -1,7 +1,7 @@
 package com.project.coffeeshopapp.dtos.request.base;
 
+import com.project.coffeeshopapp.enums.BaseEnum;
 import com.project.coffeeshopapp.enums.SortDirection;
-import com.project.coffeeshopapp.enums.SortField;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public abstract class BasePaginationSortRequest<T extends SortField> {
+public abstract class BasePaginationSortRequest<T extends BaseEnum> {
     @Min(value = 0, message = "Page index must not be less than zero")
     private Integer page = 0;
 

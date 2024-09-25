@@ -118,24 +118,9 @@ public class GlobalExceptionHandler {
 
             // Check if error relate to type data error
             if (fieldError.getCode().equals(TypeMismatchException.ERROR_CODE)) {
-                if (fieldError.getField().equals("sortDir")) {
-                    message = String.format("Invalid value '%s' for parameter '%s'. Expected one of: %s.",
-                            fieldError.getRejectedValue(),
-                            fieldError.getField(),
-                            Arrays.stream(SortDirection.values())
-                                    .map(SortDirection::getValue)
-                                    .collect(Collectors.joining(", "))
-                    );
-                }
-                if (fieldError.getField().equals("sortBy")) {
-                    message = String.format("Invalid value '%s' for parameter '%s'. Expected one of: %s.",
-                            fieldError.getRejectedValue(),
-                            fieldError.getField(),
-                            Arrays.stream(CategorySortField.values())
-                                    .map(CategorySortField::getValue)
-                                    .collect(Collectors.joining(", "))
-                    );
-                }
+                message = String.format("Invalid value '%s' for parameter '%s'.",
+                        fieldError.getRejectedValue(),
+                        fieldError.getField());
             }
 
             errorDetails.add(ErrorResponse.ErrorDetail.builder()

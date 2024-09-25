@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum SortDirection implements SortField {
+public enum SortDirection implements BaseEnum {
     ASC("asc"),
     DESC("desc");
     private final String value;

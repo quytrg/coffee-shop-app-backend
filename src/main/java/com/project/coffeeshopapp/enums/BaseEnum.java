@@ -1,6 +1,6 @@
 package com.project.coffeeshopapp.enums;
 
-public interface SortField {
+public interface BaseEnum {
     String getValue();
 }
 

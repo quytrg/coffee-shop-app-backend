@@ -1,7 +1,7 @@
 package com.project.coffeeshopapp.utils;
 
 import com.project.coffeeshopapp.enums.SortDirection;
-import com.project.coffeeshopapp.enums.SortField;
+import com.project.coffeeshopapp.enums.BaseEnum;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class SortUtil {
-    public Sort createSort(List<? extends SortField> sortBy, List<SortDirection> sortDir) {
+    public Sort createSort(List<? extends BaseEnum> sortBy, List<SortDirection> sortDir) {
         List<Sort.Order> orders = new ArrayList<>();
 
         for (int i = 0; i < sortBy.size(); i++) {

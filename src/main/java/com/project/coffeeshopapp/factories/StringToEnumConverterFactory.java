@@ -1,28 +1,28 @@
 package com.project.coffeeshopapp.factories;
 
-import com.project.coffeeshopapp.enums.SortField;
+import com.project.coffeeshopapp.enums.BaseEnum;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Implement a ConverterFactory that produces converters for any enum type extending SortField.
+ * Implement a ConverterFactory that produces converters for any enum type extending BaseEnum.
  * This factory leverages generics to handle multiple enum types dynamically.
  */
 @Component
-public class StringToEnumConverterFactory implements ConverterFactory<String, SortField> {
+public class StringToEnumConverterFactory implements ConverterFactory<String, BaseEnum> {
 
     @Override
-    public <T extends SortField> Converter<String, T> getConverter(Class<T> targetType) {
+    public <T extends BaseEnum> Converter<String, T> getConverter(Class<T> targetType) {
         return new StringToEnumConverter<>(targetType);
     }
 
     /**
      * Inner class that performs the actual conversion from String to Enum.
      *
-     * @param <T> The type of Enum extending SortField.
+     * @param <T> The type of Enum extending BaseEnum.
      */
-    private static class StringToEnumConverter<T extends SortField> implements Converter<String, T> {
+    private static class StringToEnumConverter<T extends BaseEnum> implements Converter<String, T> {
         private final Class<T> enumType;
 
         public StringToEnumConverter(Class<T> enumType) {
@@ -39,7 +39,7 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, So
                     return enumConstant;
                 }
             }
-            throw new IllegalArgumentException("Invalid sortBy value: " + source);
+            throw new IllegalArgumentException("Invalid enum value: " + source);
         }
     }
 }

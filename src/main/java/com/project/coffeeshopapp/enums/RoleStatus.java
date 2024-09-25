@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RoleStatus {
-    ACTIVE("Active"),
-    INACTIVE("Inactive");
+public enum RoleStatus implements BaseEnum{
+    ACTIVE("active"),
+    INACTIVE("inactive");
 
     private final String value;
 }

@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ProductStatus {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    OUT_OF_STOCK("OutOfStock");
+public enum ProductStatus implements BaseEnum {
+    ACTIVE("active"),
+    INACTIVE("inactive"),
+    OUT_OF_STOCK("outOfStock");
     private final String value;
 }

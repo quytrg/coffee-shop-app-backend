@@ -2,6 +2,9 @@ package com.project.coffeeshopapp.repositories;
 
 import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User u SET u.deleted = true WHERE u.id = :id")
     void softDelete(@Param("id") Long id);
+
+    @Override
+    @EntityGraph(attributePaths = {"role"})
+    Page<User> findAll(Pageable pageable);
 }

@@ -11,12 +11,14 @@ import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
+import com.project.coffeeshopapp.specifications.ProductSpecification;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,14 @@ public class ProductService implements IProductService {
                 request.getSize(),
                 sort
         );
-        Page<Product> products = productRepository.findAll(pageable);
+
+        Specification<Product> spec = ProductSpecification.builder()
+                .categoryId(request.getCategoryId())
+                .keyword(request.getKeyword())
+                .status(request.getStatus())
+                .build();
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
         return products.map(productMapper::productToProductSummaryResponse);
     }
 

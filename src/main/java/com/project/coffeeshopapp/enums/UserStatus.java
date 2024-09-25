@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserStatus {
-    ACTIVE("Active"),
-    INACTIVE("Inactive");
+public enum UserStatus implements BaseEnum{
+    ACTIVE("active"),
+    INACTIVE("inactive");
     private final String value;
 }

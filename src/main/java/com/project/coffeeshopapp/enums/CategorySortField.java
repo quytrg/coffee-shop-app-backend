@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CategorySortField implements SortField {
+public enum CategorySortField implements BaseEnum {
     NAME("name"),
     CREATED_AT("createdAt"),
     UPDATED_AT("updatedAt");
