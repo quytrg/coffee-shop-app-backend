@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -49,4 +51,12 @@ public class User extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable=false)
     private Role role;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Where(clause = "image_association_type = 'USER'")
+    private List<Image> images = new ArrayList<>();
 }

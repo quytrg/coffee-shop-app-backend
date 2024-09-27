@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,8 +34,14 @@ public class Category extends BaseEntity {
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
-    @Column(name = "image_url", columnDefinition = "TEXT")
-    private String imageUrl;
+    @OneToMany(
+            mappedBy = "category",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Where(clause = "image_association_type = 'CATEGORY'")
+    private List<Image> images = new ArrayList<>();
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

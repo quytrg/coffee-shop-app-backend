@@ -2,10 +2,9 @@ package com.project.coffeeshopapp.controlleradvices;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.ImageAlreadyAssociatedException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
-import com.project.coffeeshopapp.enums.CategorySortField;
-import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +32,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final ResponseUtil responseUtil;
+
+    @ExceptionHandler(ImageAlreadyAssociatedException.class)
+    public ResponseEntity<ErrorResponse> handleImageAlreadyAssociatedException(ImageAlreadyAssociatedException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("N/A")
+                        .message(ex.getMessage())
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Data constraints violation",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException ex) {
