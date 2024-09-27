@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.dtos.response.product;
 
-import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
 import com.project.coffeeshopapp.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,5 +13,6 @@ public class ProductSummaryResponse {
     private String name;
     private String imageUrl;
     private ProductStatus status;
-    private CategorySummaryResponse category;
+    private Long categoryId;
+    private String categoryName;
 }
