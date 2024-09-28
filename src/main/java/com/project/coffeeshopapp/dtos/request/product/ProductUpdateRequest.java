@@ -23,7 +23,5 @@ public class ProductUpdateRequest {
 
     private Long categoryId;
 
-    // only check if permissionIds exists (!= null)
-    @Size(min = 1, message = "Image ids must contain at least one value")
-    private List<Long> imageIds = new ArrayList<>();
+    private List<Long> imageIds;
 }

@@ -23,8 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,8 +73,41 @@ public class ProductService implements IProductService {
                             .orElseThrow(() -> new DataNotFoundException("category", "Category not found with id: " + categoryId));
                     product.setCategory(category);
                 });
-        productRepository.save(product);
-        return productMapper.productToProductResponse(product);
+        // Handle image associations
+        // imageIds always have number of items >= 1 or imageIds = null
+        // because of size validation in productUpdateRequest
+        Optional.ofNullable(productUpdateRequest.getImageIds())
+                .ifPresent(imageIds -> {
+                    // Convert lists to sets for efficient lookup
+                    Set<Long> newImageIds = new HashSet<>(imageIds);
+                    Set<Long> oldImageIds = product.getImages().stream()
+                            .map(Image::getId)
+                            .collect(Collectors.toSet());
+
+                    // Determine images to add
+                    Set<Long> imagesToAdd = new HashSet<>(newImageIds);
+                    imagesToAdd.removeAll(oldImageIds);
+
+                    // Determine images to remove
+                    Set<Long> imagesToRemove = new HashSet<>(oldImageIds);
+                    imagesToRemove.removeAll(newImageIds);
+
+                    // Associate new images
+                    if (!imagesToAdd.isEmpty()) {
+                        List<Image> newImages = imageService.associateImagesWithProduct(product, new ArrayList<>(imagesToAdd));
+                        product.getImages().addAll(newImages);
+                    }
+
+                    // Dissociate removed images
+                    if (!imagesToRemove.isEmpty()) {
+                        List<Image> images = product.getImages().stream()
+                                .filter(image -> imagesToRemove.contains(image.getId()))
+                                .toList();
+                        product.getImages().removeAll(images);
+                    }
+                });
+        Product updatedProduct = productRepository.save(product);
+        return productMapper.productToProductResponse(updatedProduct);
     }
 
     @Override
