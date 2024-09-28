@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +22,8 @@ public class ProductUpdateRequest {
     private ProductStatus status;
 
     private Long categoryId;
+
+    // only check if permissionIds exists (!= null)
+    @Size(min = 1, message = "Image ids must contain at least one value")
+    private List<Long> imageIds = new ArrayList<>();
 }

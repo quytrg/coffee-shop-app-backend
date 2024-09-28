@@ -8,9 +8,11 @@ import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
 import com.project.coffeeshopapp.mappers.ProductMapper;
 import com.project.coffeeshopapp.models.Category;
+import com.project.coffeeshopapp.models.Image;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
+import com.project.coffeeshopapp.services.image.IImageService;
 import com.project.coffeeshopapp.specifications.ProductSpecification;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
@@ -21,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,17 +34,24 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final PaginationUtil paginationUtil;
     private final SortUtil sortUtil;
+    private final IImageService imageService;
 
     @Override
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
+        // convert from ProductCreateRequest to Product
+        Product product = productMapper.productCreateRequestToProduct(productCreateRequest);
+
         // check if categoryId exists
         Category category = categoryRepository.findById(productCreateRequest.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("category", "Category not found with id: " + productCreateRequest.getCategoryId()));
-        // convert from ProductCreateRequest to Product
-        Product product = productMapper.productCreateRequestToProduct(productCreateRequest);
         // set category for product
         product.setCategory(category);
+
+        // Associate images with product
+        List<Image> images = imageService.associateImagesWithProduct(product, productCreateRequest.getImageIds());
+        product.setImages(images);
+
         // create product
         Product newProduct = productRepository.save(product);
         // mapping new product to dto response

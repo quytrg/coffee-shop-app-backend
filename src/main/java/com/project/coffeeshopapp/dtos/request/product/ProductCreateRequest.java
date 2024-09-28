@@ -2,11 +2,15 @@ package com.project.coffeeshopapp.dtos.request.product;
 
 import com.project.coffeeshopapp.enums.ProductStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +26,10 @@ public class ProductCreateRequest {
     @NotNull(message = "Product status is required")
     private ProductStatus status;
 
-    @NotNull(message = "Category id is required")
+    @NotNull(message = "Product ID is required")
     private Long categoryId;
+
+    @NotEmpty(message = "Image ids cannot be empty")
+    @Size(min = 1, message = "Image ids must contain at least one value")
+    private List<Long> imageIds = new ArrayList<>();
 }

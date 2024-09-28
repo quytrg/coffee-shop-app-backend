@@ -19,8 +19,4 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Override
     @EntityGraph(attributePaths = {"images"})
     Page<Category> findAll(Pageable pageable);
-
-    @Override
-    @EntityGraph(attributePaths = {"images"})
-    Optional<Category> findById(Long id);
 }

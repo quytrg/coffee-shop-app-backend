@@ -2,22 +2,19 @@ package com.project.coffeeshopapp.mappers;
 
 import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
-import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
-import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.models.Product;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { CategoryMapper.class, ImageMapper.class })
 public interface ProductMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "images", ignore = true)
     Product productCreateRequestToProduct(ProductCreateRequest productCreateRequest);
 
+    @Mapping(source = "images", target = "images")
     ProductResponse productToProductResponse(Product product);
-    //  mapping beans as child beans Category -> CategorySummaryResponse
-    CategorySummaryResponse categoryToCategorySummaryResponse(Category category);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "category", ignore = true)
