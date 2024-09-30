@@ -6,12 +6,9 @@ import com.project.coffeeshopapp.dtos.request.category.CategorySearchRequest;
 import com.project.coffeeshopapp.dtos.request.category.CategoryUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.category.CategoryResponse;
 import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
-import com.project.coffeeshopapp.enums.CategoryStatus;
 import com.project.coffeeshopapp.mappers.CategoryMapper;
 import com.project.coffeeshopapp.models.Category;
-import com.project.coffeeshopapp.models.Image;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
-import com.project.coffeeshopapp.services.image.ImageService;
 import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
@@ -22,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,7 +35,7 @@ public class CategoryService implements ICategoryService {
     public CategoryResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
         // map CategoryCreateRequest to Category
         Category newCategory = categoryMapper.categoryCreateRequestToCategory(categoryCreateRequest);
-        // associate images with product
+        // associate images with category
         imageAssociationService.createImageAssociations(newCategory, categoryCreateRequest.getImageIds());
         // create category
         Category savedCategory = categoryRepository.save(newCategory);

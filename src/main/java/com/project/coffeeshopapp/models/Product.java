@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.ImageAssociationType;
 import com.project.coffeeshopapp.enums.ProductStatus;
+import com.project.coffeeshopapp.models.contracts.ImageAssociable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -19,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Where(clause = "deleted=false")
 @Builder
-public class Product extends BaseEntity {
+public class Product extends BaseEntity implements ImageAssociable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,4 +51,21 @@ public class Product extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable=false)
     private Category category;
+
+    @Override
+    public void addImage(Image image) {
+        if (images == null) {
+            images = new ArrayList<Image>();
+        }
+        images.add(image);
+        image.setProduct(this);
+        image.setImageAssociationType(ImageAssociationType.PRODUCT);
+    }
+
+    @Override
+    public void removeImage(Image image) {
+        images.remove(image);
+        image.setProduct(null);
+        image.setImageAssociationType(null);
+    }
 }
