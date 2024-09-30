@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Product extends BaseEntity {
             orphanRemoval = true
     )
     @Where(clause = "image_association_type = 'PRODUCT'")
+    @BatchSize(size = 20)
     private List<Image> images = new ArrayList<>();
 
     @Column(name = "status", nullable = false)

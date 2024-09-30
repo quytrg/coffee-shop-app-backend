@@ -22,5 +22,6 @@ public interface ProductMapper {
 
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "category.name", target = "categoryName")
+    @Mapping(source = "images", target = "imageUrls")
     ProductSummaryResponse productToProductSummaryResponse(Product product);
 }
