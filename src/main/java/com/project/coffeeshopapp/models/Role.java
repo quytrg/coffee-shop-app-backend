@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
@@ -37,6 +38,7 @@ public class Role extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     @OrderBy("name ASC")
+    @BatchSize(size = 20)
     private Set<Permission> permissions = new HashSet<>();
 
     @Column(name = "name", nullable = false, unique = true)
