@@ -1,10 +1,13 @@
 package com.project.coffeeshopapp.models;
 
 import com.project.coffeeshopapp.enums.CategoryStatus;
+import com.project.coffeeshopapp.enums.ImageAssociationType;
+import com.project.coffeeshopapp.models.contracts.ImageAssociable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Where(clause = "deleted=false")
 @Builder
-public class Category extends BaseEntity {
+public class Category extends BaseEntity implements ImageAssociable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +44,7 @@ public class Category extends BaseEntity {
             orphanRemoval = true
     )
     @Where(clause = "image_association_type = 'CATEGORY'")
+    @BatchSize(size = 20)
     private List<Image> images = new ArrayList<>();
 
     @Column(name = "status", nullable = false)
@@ -52,4 +56,21 @@ public class Category extends BaseEntity {
             cascade = { CascadeType.PERSIST, CascadeType.MERGE }
     )
     private Set<Product> products = new HashSet<>();
+
+    @Override
+    public void addImage(Image image) {
+        if (images == null) {
+            images = new ArrayList<Image>();
+        }
+        images.add(image);
+        image.setCategory(this);
+        image.setImageAssociationType(ImageAssociationType.CATEGORY);
+    }
+
+    @Override
+    public void removeImage(Image image) {
+        images.remove(image);
+        image.setCategory(null);
+        image.setImageAssociationType(null);
+    }
 }

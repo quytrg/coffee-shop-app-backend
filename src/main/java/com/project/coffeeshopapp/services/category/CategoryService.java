@@ -9,7 +9,10 @@ import com.project.coffeeshopapp.dtos.response.category.CategorySummaryResponse;
 import com.project.coffeeshopapp.enums.CategoryStatus;
 import com.project.coffeeshopapp.mappers.CategoryMapper;
 import com.project.coffeeshopapp.models.Category;
+import com.project.coffeeshopapp.models.Image;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
+import com.project.coffeeshopapp.services.image.ImageService;
+import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
@@ -26,11 +32,16 @@ public class CategoryService implements ICategoryService {
     private final CategoryRepository categoryRepository;
     private final PaginationUtil paginationUtil;
     private final SortUtil sortUtil;
+    private final IImageAssociationService imageAssociationService;
 
     @Override
     @Transactional
     public CategoryResponse createCategory(CategoryCreateRequest categoryCreateRequest) {
+        // map CategoryCreateRequest to Category
         Category newCategory = categoryMapper.categoryCreateRequestToCategory(categoryCreateRequest);
+        // associate images with product
+        imageAssociationService.createImageAssociations(newCategory, categoryCreateRequest.getImageIds());
+        // create category
         Category savedCategory = categoryRepository.save(newCategory);
         return categoryMapper.categoryToCategoryResponse(savedCategory);
     }
@@ -41,6 +52,9 @@ public class CategoryService implements ICategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
         categoryMapper.categoryUpdateRequestToCategory(categoryUpdateRequest, category);
+        // Handle image associations
+        Optional.ofNullable(categoryUpdateRequest.getImageIds())
+                .ifPresent(imageIds -> imageAssociationService.updateImageAssociations(category, imageIds));
         Category updatedCategory = categoryRepository.save(category);
         return categoryMapper.categoryToCategoryResponse(updatedCategory);
     }
