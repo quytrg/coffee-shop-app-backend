@@ -10,12 +10,14 @@ import com.project.coffeeshopapp.mappers.CategoryMapper;
 import com.project.coffeeshopapp.models.Category;
 import com.project.coffeeshopapp.repositories.CategoryRepository;
 import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
+import com.project.coffeeshopapp.specifications.CategorySpecification;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CategorySummaryResponse> getAllCategories(CategorySearchRequest request) {
         Sort sort = sortUtil.createSort(
                 request.getSortBy(),
@@ -66,7 +69,11 @@ public class CategoryService implements ICategoryService {
                 request.getSize(),
                 sort
         );
-        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+        Specification<Category> spec = CategorySpecification.builder()
+                .keyword(request.getKeyword())
+                .status(request.getStatus())
+                .build();
+        Page<Category> categoryPage = categoryRepository.findAll(spec, pageable);
         return categoryPage.map(categoryMapper::categoryToCategorySummaryResponse);
     }
 
