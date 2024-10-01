@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.dtos.request.user;
 
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
 import com.project.coffeeshopapp.enums.UserSortField;
+import com.project.coffeeshopapp.enums.UserStatus;
 import lombok.*;
 
 import java.util.Collections;
@@ -13,6 +14,10 @@ import java.util.List;
 public class UserSearchRequest extends BasePaginationSortRequest<UserSortField> {
     // Additional search-specific fields
     private String keyword;
+    private UserStatus status;
+    private Boolean sex;
+    private Long roleId;
+
     @Override
     protected List<UserSortField> initSortBy() {
         return Collections.singletonList(UserSortField.FULL_NAME);

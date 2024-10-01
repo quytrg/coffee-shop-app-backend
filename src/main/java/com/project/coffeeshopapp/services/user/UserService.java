@@ -7,7 +7,6 @@ import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
-import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.mappers.UserMapper;
 import com.project.coffeeshopapp.models.CustomUserDetails;
 import com.project.coffeeshopapp.models.Role;
@@ -15,6 +14,7 @@ import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.repositories.UserRepository;
 import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
+import com.project.coffeeshopapp.specifications.UserSpecification;
 import com.project.coffeeshopapp.utils.JwtUtil;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -118,7 +119,13 @@ public class UserService implements IUserService {
                 request.getSize(),
                 sort
         );
-        Page<User> userPage = userRepository.findAll(pageable);
+        Specification<User> spec = UserSpecification.builder()
+                .roleId(request.getRoleId())
+                .keyword(request.getKeyword())
+                .status(request.getStatus())
+                .sex(request.getSex())
+                .build();
+        Page<User> userPage = userRepository.findAll(spec, pageable);
         return userPage.map(userMapper::userToUserSummaryResponse);
     }
 
