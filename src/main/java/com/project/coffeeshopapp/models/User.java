@@ -1,8 +1,11 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.ImageAssociationType;
 import com.project.coffeeshopapp.enums.UserStatus;
+import com.project.coffeeshopapp.models.contracts.ImageAssociable;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Where(clause = "deleted=false")
 @Builder
-public class User extends BaseEntity {
+public class User extends BaseEntity implements ImageAssociable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -58,5 +61,23 @@ public class User extends BaseEntity {
             orphanRemoval = true
     )
     @Where(clause = "image_association_type = 'USER'")
+    @BatchSize(size = 20)
     private List<Image> images = new ArrayList<>();
+
+    @Override
+    public void addImage(Image image) {
+        if (images == null) {
+            images = new ArrayList<Image>();
+        }
+        images.add(image);
+        image.setUser(this);
+        image.setImageAssociationType(ImageAssociationType.USER);
+    }
+
+    @Override
+    public void removeImage(Image image) {
+        images.remove(image);
+        image.setUser(null);
+        image.setImageAssociationType(null);
+    }
 }

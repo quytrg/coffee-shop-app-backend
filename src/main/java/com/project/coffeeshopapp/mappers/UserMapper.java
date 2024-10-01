@@ -10,24 +10,26 @@ import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { RoleMapper.class, ImageMapper.class })
 public interface UserMapper {
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "images", ignore = true)
     User userCreateRequestToUser(UserCreateRequest userCreateRequest);
 
     @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
+    @Mapping(source = "images", target = "images")
     UserResponse userToUserResponse(User user);
-    //  mapping beans as child beans Role -> RoleSummaryResponse
-    RoleSummaryResponse roleToRoleSummaryResponse(Role role);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "images", ignore = true)
     void userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, @MappingTarget User user);
 
     @Mapping(source = "role.id", target = "roleId")
     @Mapping(source = "role.name", target = "roleName")
+    @Mapping(source = "images", target = "imageUrls")
     UserSummaryResponse userToUserSummaryResponse(User user);
 
 }

@@ -14,6 +14,7 @@ import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.repositories.UserRepository;
+import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
 import com.project.coffeeshopapp.utils.JwtUtil;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
@@ -41,18 +42,26 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
     private final PaginationUtil paginationUtil;
     private final SortUtil sortUtil;
+    private final IImageAssociationService imageAssociationService;
 
     @Override
+    @Transactional
     public UserResponse createUser(UserCreateRequest userCreateRequest){
+        // convert from userCreateRequest to User
+        User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
+
+        // encode password
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
         // check if roleId exists
         Role role = roleRepository.findById(userCreateRequest.getRoleId())
                 .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + userCreateRequest.getRoleId()));
-        // convert from userCreateRequest to User
-        User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
-        // encode password
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         // set role for user
         newUser.setRole(role);
+
+        // associate images with user
+        imageAssociationService.createImageAssociations(newUser, userCreateRequest.getImageIds());
+
         // save the new user
         User createdUser = userRepository.save(newUser);
         // convert from User to UserResponse
@@ -73,6 +82,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
@@ -88,6 +98,9 @@ public class UserService implements IUserService {
         // hash password if it presents
         Optional.ofNullable(userUpdateRequest.getPassword())
                 .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
+        // Handle image associations
+        Optional.ofNullable(userUpdateRequest.getImageIds())
+                .ifPresent(imageIds -> imageAssociationService.updateImageAssociations(user, imageIds));
         // save update
         User updatedUser = userRepository.save(user);
         return userMapper.userToUserResponse(updatedUser);

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class UserSummaryResponse {
     private UserStatus status;
     private Long roleId;
     private String roleName;
+    private List<String> imageUrls;
 }
