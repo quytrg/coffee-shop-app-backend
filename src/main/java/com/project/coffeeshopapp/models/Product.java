@@ -68,4 +68,11 @@ public class Product extends BaseEntity implements ImageAssociable {
         image.setProduct(null);
         image.setImageAssociationType(null);
     }
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE }
+    )
+    @BatchSize(size = 5)
+    private List<ProductVariant> productVariants = new ArrayList<>();
 }

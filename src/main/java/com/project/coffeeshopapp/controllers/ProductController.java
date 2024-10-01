@@ -3,11 +3,14 @@ package com.project.coffeeshopapp.controllers;
 import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductSearchRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
+import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
 import com.project.coffeeshopapp.services.product.ProductService;
+import com.project.coffeeshopapp.services.productvariant.ProductVariantService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -26,6 +29,7 @@ public class ProductController {
     private final ProductService productService;
     private final ResponseUtil responseUtil;
     private final PaginationUtil paginationUtil;
+    private final ProductVariantService productVariantService;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<ProductResponse>> createProduct(
@@ -82,6 +86,19 @@ public class ProductController {
         return responseUtil.createSuccessResponseWithoutData(
                 "Product successfully deleted",
                 HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/{productId}/variants")
+    public ResponseEntity<SuccessResponse<ProductVariantResponse>> createProductVariant(
+            @PathVariable Long productId,
+            @Valid @RequestBody ProductVariantCreateRequest productVariantCreateRequest) {
+        ProductVariantResponse productVariantResponse = productVariantService
+                .createProductVariant(productId, productVariantCreateRequest);
+        return responseUtil.createSuccessResponse(
+                productVariantResponse,
+                "Product variant created successfully",
+                HttpStatus.CREATED
         );
     }
 }
