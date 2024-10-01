@@ -4,6 +4,7 @@ import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductSearchRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
@@ -99,6 +100,19 @@ public class ProductController {
                 productVariantResponse,
                 "Product variant created successfully",
                 HttpStatus.CREATED
+        );
+    }
+
+    @PatchMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<SuccessResponse<ProductVariantResponse>> updateProductVariant(
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
+            @Valid @RequestBody ProductVariantUpdateRequest productVariantUpdateRequest) {
+        ProductVariantResponse productVariantResponse = productVariantService.updateProductVariant(productId, variantId, productVariantUpdateRequest);
+        return responseUtil.createSuccessResponse(
+                productVariantResponse,
+                "Product variant updated successfully",
+                HttpStatus.OK
         );
     }
 }

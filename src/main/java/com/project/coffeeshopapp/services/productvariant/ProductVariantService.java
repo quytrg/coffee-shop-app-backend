@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.services.productvariant;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
 import com.project.coffeeshopapp.mappers.ProductVariantMapper;
 import com.project.coffeeshopapp.models.Product;
@@ -41,5 +42,18 @@ public class ProductVariantService implements IProductVariantService {
         ProductVariant savedProductVariant = productVariantRepository.save(productVariant);
         // map ProductVariant to ProductVariantResponse
         return productVariantMapper.productVariantToProductVariantResponse(savedProductVariant);
+    }
+
+    @Override
+    @Transactional
+    public ProductVariantResponse updateProductVariant(Long productId, Long variantId, ProductVariantUpdateRequest productVariantUpdateRequest) {
+        ProductVariant productVariant = productVariantRepository.findByIdAndProductId(variantId, productId)
+                .orElseThrow(() -> new DataNotFoundException("ProductVariant", "ProductVariant not found with id: " + variantId + " for Product id: " + productId));
+        // map fields not null from ProductVariantUpdateRequest to ProductVariant
+        productVariantMapper.productVariantUpdateRequestToProductVariant(productVariantUpdateRequest, productVariant);
+        // save update
+        ProductVariant updatedVariant = productVariantRepository.save(productVariant);
+        // map ProductVariant tp ProductVariantResponse
+        return productVariantMapper.productVariantToProductVariantResponse(updatedVariant);
     }
 }
