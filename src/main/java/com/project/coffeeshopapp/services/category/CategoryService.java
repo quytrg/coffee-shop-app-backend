@@ -47,7 +47,7 @@ public class CategoryService implements ICategoryService {
     @Override
     @Transactional
     public CategoryResponse updateCategory(Long id, CategoryUpdateRequest categoryUpdateRequest) {
-        Category category = categoryRepository.findById(id)
+        Category category = categoryRepository.findByIdWithImages(id)
                 .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
         categoryMapper.categoryUpdateRequestToCategory(categoryUpdateRequest, category);
         // Handle image associations
@@ -80,7 +80,7 @@ public class CategoryService implements ICategoryService {
     @Override
     @Transactional(readOnly = true)
     public CategoryResponse getCategoryById(Long id) {
-        Category category = categoryRepository.findById(id)
+        Category category = categoryRepository.findByIdWithImages(id)
                 .orElseThrow(() -> new DataNotFoundException("category" ,"Category not found with id: " + id));
         return categoryMapper.categoryToCategoryResponse(category);
     }
