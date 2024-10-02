@@ -29,8 +29,6 @@ public class CategoryController {
     private final ICategoryService categoryService;
     private final PaginationUtil paginationUtil;
     private final ResponseUtil responseUtil;
-    private final PaginationProperties paginationProperties;
-    private final RoleService roleService;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<CategoryResponse>> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest) {
