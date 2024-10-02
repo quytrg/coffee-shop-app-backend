@@ -50,7 +50,7 @@ public class RoleService implements IRoleService {
     @Override
     @Transactional
     public RoleResponse updateRole(Long id, RoleUpdateRequest roleUpdateRequest) {
-        Role role = roleRepository.findById(id)
+        Role role = roleRepository.findByIdWithPermissions(id)
                 .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
 
         roleMapper.roleUpdateRequestToRole(roleUpdateRequest, role);
@@ -83,7 +83,7 @@ public class RoleService implements IRoleService {
 
     @Override
     public RoleResponse getRoleWithPermissions(Long id) {
-        Role role = roleRepository.findById(id)
+        Role role = roleRepository.findByIdWithPermissions(id)
                 .orElseThrow(() -> new DataNotFoundException("role" ,"Role not found with id: " + id));
         return roleMapper.roleToRoleResponse(role);
     }

@@ -38,6 +38,7 @@ public class Role extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     @BatchSize(size = 20)
+    @OrderBy("name ASC")
     private Set<Permission> permissions = new HashSet<>();
 
     @Column(name = "name", nullable = false, unique = true)
