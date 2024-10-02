@@ -12,6 +12,7 @@ import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantSummaryResponse;
+import com.project.coffeeshopapp.repositories.ProductVariantRepository;
 import com.project.coffeeshopapp.services.product.ProductService;
 import com.project.coffeeshopapp.services.productvariant.ProductVariantService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
@@ -33,6 +34,7 @@ public class ProductController {
     private final ResponseUtil responseUtil;
     private final PaginationUtil paginationUtil;
     private final ProductVariantService productVariantService;
+    private final ProductVariantRepository productVariantRepository;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<ProductResponse>> createProduct(
@@ -141,6 +143,17 @@ public class ProductController {
         return responseUtil.createSuccessResponse(
                 productVariantResponse,
                 "Product variant fetched successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<SuccessResponse<?>> deleteProductVariant(
+            @PathVariable Long productId,
+            @PathVariable Long variantId) {
+        productVariantService.softDeleteProductVariant(productId, variantId);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Product variant deleted successfully",
                 HttpStatus.OK
         );
     }

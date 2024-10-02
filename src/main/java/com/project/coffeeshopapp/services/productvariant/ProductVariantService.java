@@ -92,5 +92,17 @@ public class ProductVariantService implements IProductVariantService {
         return productVariantMapper.productVariantToProductVariantResponse(productVariant);
     }
 
+    @Override
+    @Transactional
+    public void softDeleteProductVariant(Long productId, Long variantId) {
+        productVariantRepository.findByIdAndProductId(variantId, productId)
+                .orElseThrow(() -> new DataNotFoundException(
+                                "ProductVariant",
+                                "ProductVariant not found with id: " + variantId + " for Product id: " + productId
+                        )
+                );
+        productVariantRepository.softDelete(variantId);
+    }
+
 
 }

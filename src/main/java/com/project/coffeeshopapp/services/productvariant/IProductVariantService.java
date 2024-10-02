@@ -12,5 +12,6 @@ public interface IProductVariantService {
     ProductVariantResponse updateProductVariant(Long productId, Long variantId, ProductVariantUpdateRequest productVariantUpdateRequest);
     Page<ProductVariantSummaryResponse> getProductVariants(Long productId, ProductVariantSearchRequest productVariantSearchRequest);
     ProductVariantResponse getProductVariant(Long productId, Long variantId);
+    void softDeleteProductVariant(Long productId, Long variantId);
 }
 
