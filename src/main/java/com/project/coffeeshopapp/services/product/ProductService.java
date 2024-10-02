@@ -63,7 +63,7 @@ public class ProductService implements IProductService {
     @Override
     @Transactional
     public ProductResponse updateProduct(Long id, ProductUpdateRequest productUpdateRequest) {
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdWithCategory(id)
                 .orElseThrow(() -> new DataNotFoundException("product", "Product not found with id: " + id));
         // mapping fields not null from ProductUpdateRequest to Product
         productMapper.productUpdateRequestToProduct(productUpdateRequest, product);
@@ -107,7 +107,7 @@ public class ProductService implements IProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdWithCategory(id)
                 .orElseThrow(() -> new DataNotFoundException("product", "Product not found with id: " + id));
         return productMapper.productToProductResponse(product);
     }
