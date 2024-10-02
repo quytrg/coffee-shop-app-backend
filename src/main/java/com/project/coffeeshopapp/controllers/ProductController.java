@@ -132,4 +132,16 @@ public class ProductController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<SuccessResponse<ProductVariantResponse>> getVariant(
+            @PathVariable Long productId,
+            @PathVariable Long variantId) {
+        ProductVariantResponse productVariantResponse = productVariantService.getProductVariant(productId, variantId);
+        return responseUtil.createSuccessResponse(
+                productVariantResponse,
+                "Product variant fetched successfully",
+                HttpStatus.OK
+        );
+    }
 }

@@ -64,7 +64,9 @@ public class ProductVariantService implements IProductVariantService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductVariantSummaryResponse> getProductVariants(Long productId, ProductVariantSearchRequest productVariantSearchRequest) {
+    public Page<ProductVariantSummaryResponse> getProductVariants(
+            Long productId,
+            ProductVariantSearchRequest productVariantSearchRequest) {
         Sort sort = sortUtil.createSort(
                 productVariantSearchRequest.getSortBy(),
                 productVariantSearchRequest.getSortDir()
@@ -77,5 +79,18 @@ public class ProductVariantService implements IProductVariantService {
         Page<ProductVariant> productVariants = productVariantRepository.findByProductId(productId, pageable);
         return productVariants.map(productVariantMapper::productVariantToProductVariantSummaryResponse);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductVariantResponse getProductVariant(Long productId, Long variantId) {
+        ProductVariant productVariant = productVariantRepository.findByIdAndProductId(variantId, productId)
+                .orElseThrow(() -> new DataNotFoundException(
+                            "ProductVariant",
+                            "ProductVariant not found with id: " + variantId + " for Product id: " + productId
+                        )
+                );
+        return productVariantMapper.productVariantToProductVariantResponse(productVariant);
+    }
+
 
 }
