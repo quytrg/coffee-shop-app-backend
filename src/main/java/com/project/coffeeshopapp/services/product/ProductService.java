@@ -46,7 +46,7 @@ public class ProductService implements IProductService {
         Product product = productMapper.productCreateRequestToProduct(productCreateRequest);
 
         // check if categoryId exists
-        Category category = categoryRepository.findById(productCreateRequest.getCategoryId())
+        Category category = categoryRepository.findByIdWithImages(productCreateRequest.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("category", "Category not found with id: " + productCreateRequest.getCategoryId()));
         // set category for product
         product.setCategory(category);
