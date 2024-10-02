@@ -38,7 +38,7 @@ public class ProductVariantService implements IProductVariantService {
         ProductVariant productVariant = productVariantMapper
                 .productVariantCreateRequestToProductVariant(productVariantCreateRequest);
         // check if productId exists
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdWithCategory(productId)
                 .orElseThrow(() -> new DataNotFoundException("product",
                         "Product not found with id: " + productId));
         // set product for product variant

@@ -51,7 +51,7 @@ public class ProductVariant extends BaseEntity {
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable=false)
     private Product product;
 }
