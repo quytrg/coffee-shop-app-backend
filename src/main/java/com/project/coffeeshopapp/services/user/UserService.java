@@ -85,7 +85,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithRole(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
         // convert userUpdateRequest to user
         userMapper.userUpdateRequestToUser(userUpdateRequest, user);
@@ -139,7 +139,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithRole(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
         return userMapper.userToUserResponse(user);
     }

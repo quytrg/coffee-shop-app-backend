@@ -51,7 +51,7 @@ public class User extends BaseEntity implements ImageAssociable {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable=false)
     private Role role;
 

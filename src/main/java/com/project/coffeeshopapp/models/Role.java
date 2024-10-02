@@ -31,13 +31,12 @@ public class Role extends BaseEntity {
     private Set<User> users = new HashSet<>();
 
     // fetch permissions along with role for authentication
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    @OrderBy("name ASC")
     @BatchSize(size = 20)
     private Set<Permission> permissions = new HashSet<>();
 
