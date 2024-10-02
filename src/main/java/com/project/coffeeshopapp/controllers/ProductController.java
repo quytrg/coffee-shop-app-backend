@@ -4,12 +4,14 @@ import com.project.coffeeshopapp.dtos.request.product.ProductCreateRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductSearchRequest;
 import com.project.coffeeshopapp.dtos.request.product.ProductUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantSearchRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductResponse;
 import com.project.coffeeshopapp.dtos.response.product.ProductSummaryResponse;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
+import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantSummaryResponse;
 import com.project.coffeeshopapp.services.product.ProductService;
 import com.project.coffeeshopapp.services.productvariant.ProductVariantService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
@@ -112,6 +114,21 @@ public class ProductController {
         return responseUtil.createSuccessResponse(
                 productVariantResponse,
                 "Product variant updated successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{productId}/variants")
+    public ResponseEntity<SuccessResponse<PaginationResponse<ProductVariantSummaryResponse>>> getProductVariants(
+            @PathVariable Long productId,
+            @Valid @ModelAttribute ProductVariantSearchRequest request) {
+        Page<ProductVariantSummaryResponse> productVariantSummaryResponsePage = productVariantService
+                .getProductVariants(productId, request);
+        PaginationResponse<ProductVariantSummaryResponse> paginationResponse = paginationUtil
+                .createPaginationResponse(productVariantSummaryResponsePage);
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Product variants fetched successfully",
                 HttpStatus.OK
         );
     }

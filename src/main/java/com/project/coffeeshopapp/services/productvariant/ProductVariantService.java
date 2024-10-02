@@ -2,8 +2,10 @@ package com.project.coffeeshopapp.services.productvariant;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantSearchRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
+import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantSummaryResponse;
 import com.project.coffeeshopapp.mappers.ProductVariantMapper;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.models.ProductVariant;
@@ -12,6 +14,9 @@ import com.project.coffeeshopapp.repositories.ProductVariantRepository;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,4 +61,21 @@ public class ProductVariantService implements IProductVariantService {
         // map ProductVariant tp ProductVariantResponse
         return productVariantMapper.productVariantToProductVariantResponse(updatedVariant);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductVariantSummaryResponse> getProductVariants(Long productId, ProductVariantSearchRequest productVariantSearchRequest) {
+        Sort sort = sortUtil.createSort(
+                productVariantSearchRequest.getSortBy(),
+                productVariantSearchRequest.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                productVariantSearchRequest.getPage(),
+                productVariantSearchRequest.getSize(),
+                sort
+        );
+        Page<ProductVariant> productVariants = productVariantRepository.findByProductId(productId, pageable);
+        return productVariants.map(productVariantMapper::productVariantToProductVariantSummaryResponse);
+    }
+
 }
