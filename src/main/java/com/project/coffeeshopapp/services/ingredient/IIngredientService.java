@@ -11,4 +11,6 @@ public interface IIngredientService {
     IngredientResponse createIngredient(IngredientCreateRequest ingredientCreateRequest);
     IngredientResponse updateIngredient(Long id, IngredientUpdateRequest ingredientUpdateRequest);
     Page<IngredientSummaryResponse> getIngredients(IngredientSearchRequest ingredientSearchRequest);
+    IngredientResponse getIngredientById(Long id);
+    void softDeleteIngredient(Long id);
 }

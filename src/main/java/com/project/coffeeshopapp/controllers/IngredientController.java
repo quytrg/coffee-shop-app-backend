@@ -1,12 +1,12 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.ingredient.IngredientCreateRequest;
-import com.project.coffeeshopapp.dtos.request.ingredient.IngredientUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.ingredient.IngredientSearchRequest;
+import com.project.coffeeshopapp.dtos.request.ingredient.IngredientUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.ingredient.IngredientResponse;
-import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.ingredient.IngredientSummaryResponse;
+import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.services.ingredient.IIngredientService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
@@ -60,6 +60,27 @@ public class IngredientController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve paginated ingredients successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<IngredientResponse>> getIngredientById(
+            @PathVariable(name = "id") Long id) {
+        IngredientResponse ingredientResponse = ingredientService.getIngredientById(id);
+        return responseUtil.createSuccessResponse(
+                ingredientResponse,
+                "Retrieve ingredient successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteIngredient(
+            @PathVariable(name = "id") Long id) {
+        ingredientService.softDeleteIngredient(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Ingredient deleted successfully",
                 HttpStatus.OK
         );
     }

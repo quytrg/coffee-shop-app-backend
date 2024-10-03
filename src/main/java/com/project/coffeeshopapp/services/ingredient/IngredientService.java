@@ -70,5 +70,23 @@ public class IngredientService implements IIngredientService {
         return ingredients.map(ingredientMapper::ingredientToIngredientSummaryResponse);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public IngredientResponse getIngredientById(Long id) {
+        // check if ingredient id exists
+        Ingredient ingredient = ingredientRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("ingredient", "Product not found with id: " + id));
+        return ingredientMapper.ingredientToIngredientResponse(ingredient);
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteIngredient(Long id) {
+        // check if ingredient id exists
+        Ingredient ingredient = ingredientRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("ingredient", "Product not found with id: " + id));
+        ingredientRepository.softDelete(id);
+    }
+
 
 }
