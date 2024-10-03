@@ -2,13 +2,17 @@ package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.ingredient.IngredientCreateRequest;
 import com.project.coffeeshopapp.dtos.request.ingredient.IngredientUpdateRequest;
+import com.project.coffeeshopapp.dtos.request.ingredient.IngredientSearchRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.ingredient.IngredientResponse;
+import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
+import com.project.coffeeshopapp.dtos.response.ingredient.IngredientSummaryResponse;
 import com.project.coffeeshopapp.services.ingredient.IIngredientService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,6 +46,20 @@ public class IngredientController {
         return responseUtil.createSuccessResponse(
                 ingredientResponse,
                 "Ingredient updated successfully",
+                HttpStatus.OK
+        );
+    }
+    
+    @GetMapping
+    public ResponseEntity<SuccessResponse<PaginationResponse<IngredientSummaryResponse>>> getIngredients(
+            @Valid @ModelAttribute IngredientSearchRequest request) {
+        Page<IngredientSummaryResponse> ingredientSummaryResponsePage = ingredientService.getIngredients(request);
+        PaginationResponse<IngredientSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                ingredientSummaryResponsePage
+        );
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve paginated ingredients successfully",
                 HttpStatus.OK
         );
     }
