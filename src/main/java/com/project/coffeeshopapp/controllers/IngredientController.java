@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.ingredient.IngredientCreateRequest;
+import com.project.coffeeshopapp.dtos.request.ingredient.IngredientUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.ingredient.IngredientResponse;
 import com.project.coffeeshopapp.services.ingredient.IIngredientService;
@@ -11,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +31,18 @@ public class IngredientController {
                 ingredientResponse,
                 "Ingredient created successfully",
                 HttpStatus.CREATED
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<IngredientResponse>> updateIngredient(
+            @PathVariable(name = "id") Long id,
+            @Valid @RequestBody IngredientUpdateRequest ingredientUpdateRequest) {
+        IngredientResponse ingredientResponse = ingredientService.updateIngredient(id, ingredientUpdateRequest);
+        return responseUtil.createSuccessResponse(
+                ingredientResponse,
+                "Ingredient updated successfully",
+                HttpStatus.OK
         );
     }
 }
