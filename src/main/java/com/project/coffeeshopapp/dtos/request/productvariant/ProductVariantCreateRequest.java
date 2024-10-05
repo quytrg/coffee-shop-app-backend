@@ -1,5 +1,6 @@
 package com.project.coffeeshopapp.dtos.request.productvariant;
 
+import com.project.coffeeshopapp.dtos.request.productvariantingredient.ProductVariantIngredientRequest;
 import com.project.coffeeshopapp.enums.ProductSize;
 import com.project.coffeeshopapp.enums.ProductVariantStatus;
 import jakarta.validation.constraints.DecimalMax;
@@ -11,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -34,4 +37,6 @@ public class ProductVariantCreateRequest {
 
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
+
+    private List<ProductVariantIngredientRequest> ingredients = new ArrayList<>();
 }

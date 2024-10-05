@@ -11,9 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "productvariants")
@@ -54,4 +57,20 @@ public class ProductVariant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable=false)
     private Product product;
+
+    @OneToMany(
+            mappedBy = "productVariant",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+    )
+    @OrderBy("preparationOrder ASC")
+    @BatchSize(size = 20)
+    private List<ProductVariantIngredient> ingredients = new ArrayList<>();
+
+    public void setIngredients(List<ProductVariantIngredient> ingredients) {
+        this.ingredients.clear();
+        if (ingredients != null) {
+            ingredients.forEach(ingredient -> ingredient.setProductVariant(this));
+            this.ingredients.addAll(ingredients);
+        }
+    }
 }

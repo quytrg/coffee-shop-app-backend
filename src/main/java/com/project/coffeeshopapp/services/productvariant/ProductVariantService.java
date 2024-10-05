@@ -4,11 +4,16 @@ import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantSearchRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
+import com.project.coffeeshopapp.dtos.request.productvariantingredient.ProductVariantIngredientRequest;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantResponse;
 import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantSummaryResponse;
+import com.project.coffeeshopapp.mappers.ProductVariantIngredientMapper;
 import com.project.coffeeshopapp.mappers.ProductVariantMapper;
+import com.project.coffeeshopapp.models.Ingredient;
 import com.project.coffeeshopapp.models.Product;
 import com.project.coffeeshopapp.models.ProductVariant;
+import com.project.coffeeshopapp.models.ProductVariantIngredient;
+import com.project.coffeeshopapp.repositories.IngredientRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
 import com.project.coffeeshopapp.repositories.ProductVariantRepository;
 import com.project.coffeeshopapp.utils.PaginationUtil;
@@ -20,6 +25,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProductVariantService implements IProductVariantService {
@@ -28,6 +37,8 @@ public class ProductVariantService implements IProductVariantService {
     private final PaginationUtil paginationUtil;
     private final SortUtil sortUtil;
     private final ProductRepository productRepository;
+    private final IngredientRepository ingredientRepository;
+    private final ProductVariantIngredientMapper productVariantIngredientMapper;
 
     @Override
     @Transactional
@@ -43,11 +54,53 @@ public class ProductVariantService implements IProductVariantService {
                         "Product not found with id: " + productId));
         // set product for product variant
         productVariant.setProduct(product);
+
+        // set ingredients
+        List<ProductVariantIngredient> pvIngredients = mapToProductVariantIngredients(
+                productVariantCreateRequest.getIngredients()
+        );
+        productVariant.setIngredients(pvIngredients);
+
         // create product variant
         ProductVariant savedProductVariant = productVariantRepository.save(productVariant);
         // map ProductVariant to ProductVariantResponse
         return productVariantMapper.productVariantToProductVariantResponse(savedProductVariant);
     }
+
+    private List<ProductVariantIngredient> mapToProductVariantIngredients(List<ProductVariantIngredientRequest> requests) {
+        List<Long> ingredientIds = requests.stream()
+                .map(ProductVariantIngredientRequest::getIngredientId)
+                .toList();
+
+        List<Ingredient> ingredients = ingredientRepository.findAllById(ingredientIds);
+
+        // check if any ingredient id not found
+        if (ingredients.size() != ingredientIds.size()) {
+            Set<Long> foundIds = ingredients.stream()
+                    .map(Ingredient::getId)
+                    .collect(Collectors.toSet());
+            List<Long> missingIds = ingredientIds.stream()
+                    .filter(id -> !foundIds.contains(id))
+                    .toList();
+            throw new DataNotFoundException("ingredient", "Ingredients not found with ids: " + missingIds);
+        }
+
+        Map<Long, Ingredient> ingredientMap = ingredients.stream()
+                .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
+
+        List<ProductVariantIngredient> pvIngredients = new ArrayList<>();
+
+        for (ProductVariantIngredientRequest request : requests) {
+            Ingredient ingredient = ingredientMap.get(request.getIngredientId());
+            ProductVariantIngredient pvi = productVariantIngredientMapper
+                    .productVariantIngredientRequestToProductVariantIngredient(request);
+            pvi.setIngredient(ingredient);
+            pvIngredients.add(pvi);
+        }
+
+        return pvIngredients;
+    }
+
 
     @Override
     @Transactional

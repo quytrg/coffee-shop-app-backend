@@ -7,7 +7,7 @@ import com.project.coffeeshopapp.dtos.response.productvariant.ProductVariantSumm
 import com.project.coffeeshopapp.models.ProductVariant;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = { ProductMapper.class })
+@Mapper(componentModel = "spring", uses = { ProductMapper.class, ProductVariantIngredientMapper.class})
 public interface ProductVariantMapper {
     @Mapping(target = "product", ignore = true)
     ProductVariant productVariantCreateRequestToProductVariant(ProductVariantCreateRequest productVariantCreateRequest);

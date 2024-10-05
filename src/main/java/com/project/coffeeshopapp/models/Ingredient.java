@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "ingredients")
 @Getter
@@ -33,4 +36,10 @@ public class Ingredient extends BaseEntity {
     @Column(name = "storage_instructions", columnDefinition = "TEXT", length = 2000)
     @Size(max = 2000, message = "Storage instructions cannot exceed 2000 characters")
     private String storageInstructions;
+
+    @OneToMany(
+            mappedBy = "ingredient",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+    )
+    private List<ProductVariantIngredient> productVariants = new ArrayList<>();
 }
