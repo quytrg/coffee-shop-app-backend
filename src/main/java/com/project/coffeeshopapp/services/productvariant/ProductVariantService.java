@@ -104,11 +104,19 @@ public class ProductVariantService implements IProductVariantService {
 
     @Override
     @Transactional
-    public ProductVariantResponse updateProductVariant(Long productId, Long variantId, ProductVariantUpdateRequest productVariantUpdateRequest) {
+    public ProductVariantResponse updateProductVariant(
+            Long productId,
+            Long variantId,
+            ProductVariantUpdateRequest productVariantUpdateRequest) {
         ProductVariant productVariant = productVariantRepository.findByIdAndProductId(variantId, productId)
                 .orElseThrow(() -> new DataNotFoundException("ProductVariant", "ProductVariant not found with id: " + variantId + " for Product id: " + productId));
         // map fields not null from ProductVariantUpdateRequest to ProductVariant
         productVariantMapper.productVariantUpdateRequestToProductVariant(productVariantUpdateRequest, productVariant);
+        // set a new ingredients if ingredients not null
+        Optional.ofNullable(productVariantUpdateRequest.getIngredients())
+                .ifPresent(ingredients -> {
+                    productVariant.setIngredients(mapToProductVariantIngredients(ingredients));
+                });
         // save update
         ProductVariant updatedVariant = productVariantRepository.save(productVariant);
         // map ProductVariant tp ProductVariantResponse

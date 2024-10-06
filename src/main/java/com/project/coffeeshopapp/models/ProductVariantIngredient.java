@@ -9,24 +9,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(
-        name = "productvariant_ingredients",
-        uniqueConstraints = {
-        @UniqueConstraint(
-                columnNames = {"productvariant_id", "ingredient_id"},
-                name = "uk_productvariant_ingredient"
-        )
-})
+//@Table(
+//        name = "productvariant_ingredients",
+//        uniqueConstraints = {
+//        @UniqueConstraint(
+//                columnNames = {"productvariant_id", "ingredient_id"},
+//                name = "uk_productvariant_ingredient"
+//        )
+//})
+@Table(name = "productvariant_ingredients")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Where(clause = "deleted=false")
+@SQLRestriction("deleted=false")
 public class ProductVariantIngredient extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

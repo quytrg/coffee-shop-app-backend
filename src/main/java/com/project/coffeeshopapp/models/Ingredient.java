@@ -39,7 +39,8 @@ public class Ingredient extends BaseEntity {
 
     @OneToMany(
             mappedBy = "ingredient",
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+            orphanRemoval = true
     )
     private List<ProductVariantIngredient> productVariants = new ArrayList<>();
 }

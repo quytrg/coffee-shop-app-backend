@@ -60,7 +60,8 @@ public class ProductVariant extends BaseEntity {
 
     @OneToMany(
             mappedBy = "productVariant",
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+            orphanRemoval = true
     )
     @OrderBy("preparationOrder ASC")
     @BatchSize(size = 20)
