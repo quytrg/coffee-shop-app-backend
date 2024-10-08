@@ -15,6 +15,8 @@ spring:
       hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
       format_sql: true
+      enable_lazy_load_no_trans: true
+      default_batch_fetch_size: 20
   servlet:
     multipart:
       max-file-size: 10MB
@@ -24,3 +26,6 @@ api:
 jwt:
   expiration: 2592000 #30 days = 30 * 24 * 60 * 60
   secretKey: your-secret-key
+pagination:
+  default-page-size: 10
+  max-page-size: 100

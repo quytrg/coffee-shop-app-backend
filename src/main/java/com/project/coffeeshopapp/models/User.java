@@ -1,10 +1,16 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.ImageAssociationType;
+import com.project.coffeeshopapp.enums.UserStatus;
+import com.project.coffeeshopapp.models.contracts.ImageAssociable;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,7 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Where(clause = "deleted=false")
 @Builder
-public class User extends BaseEntity {
+public class User extends BaseEntity implements ImageAssociable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,8 +40,9 @@ public class User extends BaseEntity {
     @Column(name = "password", length = 100, nullable = false)
     private String password;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Column(name = "sex")
     private Boolean sex;
@@ -44,7 +51,33 @@ public class User extends BaseEntity {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable=false)
     private Role role;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Where(clause = "image_association_type = 'USER'")
+    @BatchSize(size = 20)
+    private List<Image> images = new ArrayList<>();
+
+    @Override
+    public void addImage(Image image) {
+        if (images == null) {
+            images = new ArrayList<Image>();
+        }
+        images.add(image);
+        image.setUser(this);
+        image.setImageAssociationType(ImageAssociationType.USER);
+    }
+
+    @Override
+    public void removeImage(Image image) {
+        images.remove(image);
+        image.setUser(null);
+        image.setImageAssociationType(null);
+    }
 }

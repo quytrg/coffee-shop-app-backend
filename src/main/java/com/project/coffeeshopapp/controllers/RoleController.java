@@ -1,21 +1,18 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.role.RoleCreateRequest;
+import com.project.coffeeshopapp.dtos.request.role.RoleSearchRequest;
 import com.project.coffeeshopapp.dtos.request.role.RoleUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleSummaryResponse;
-import com.project.coffeeshopapp.services.role.RoleService;
+import com.project.coffeeshopapp.services.role.IRoleService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequestMapping("${api.prefix}/roles")
 public class RoleController {
-    private final RoleService roleService;
+    private final IRoleService roleService;
     private final PaginationUtil paginationUtil;
     private final ResponseUtil responseUtil;
 
@@ -54,21 +51,14 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PaginationResponse<RoleSummaryResponse>>> getAllRoles(
-            @RequestParam(name = "page", defaultValue = "0") @Min(0) Integer page,
-            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
-        PageRequest pageRequest = PageRequest.of(
-                page, size,
-                Sort.by("name")
-        );
-        Page<RoleSummaryResponse> roleSummaryResponsePage = roleService.getAllRoles(pageRequest);
-
+            @Valid @ModelAttribute RoleSearchRequest request) {
+        Page<RoleSummaryResponse> roleSummaryResponsePage = roleService.getAllRoles(request);
         PaginationResponse<RoleSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
-                roleSummaryResponsePage, page, size
+                roleSummaryResponsePage
         );
-
         return responseUtil.createSuccessResponse(
                 paginationResponse,
-                "Retrieve all roles successfully",
+                "Retrieve paginated roles successfully",
                 HttpStatus.OK
         );
     }

@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.services.user;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
+import com.project.coffeeshopapp.dtos.request.user.UserSearchRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
@@ -12,15 +13,19 @@ import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.RoleRepository;
 import com.project.coffeeshopapp.repositories.UserRepository;
+import com.project.coffeeshopapp.services.imageassociation.IImageAssociationService;
+import com.project.coffeeshopapp.specifications.UserSpecification;
 import com.project.coffeeshopapp.utils.JwtUtil;
-import com.project.coffeeshopapp.validationservices.user.IUserValidationService;
+import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,24 +37,32 @@ import java.util.Optional;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final IUserValidationService userValidationService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
     private final RoleRepository roleRepository;
+    private final PaginationUtil paginationUtil;
+    private final SortUtil sortUtil;
+    private final IImageAssociationService imageAssociationService;
 
     @Override
+    @Transactional
     public UserResponse createUser(UserCreateRequest userCreateRequest){
+        // convert from userCreateRequest to User
+        User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
+
+        // encode password
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
         // check if roleId exists
         Role role = roleRepository.findById(userCreateRequest.getRoleId())
                 .orElseThrow(() -> new DataNotFoundException("role", "Role not found with id: " + userCreateRequest.getRoleId()));
-        // convert from userCreateRequest to User
-        User newUser = userMapper.userCreateRequestToUser(userCreateRequest);
-        // encode password
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         // set role for user
         newUser.setRole(role);
+
+        // associate images with user
+        imageAssociationService.createImageAssociations(newUser, userCreateRequest.getImageIds());
+
         // save the new user
         User createdUser = userRepository.save(newUser);
         // convert from User to UserResponse
@@ -70,8 +83,9 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
-        User user = userRepository.findByIdAndIsActiveAndDeleted(id, true, false)
+        User user = userRepository.findByIdWithRole(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "Cannot find user with id " + id));
         // convert userUpdateRequest to user
         userMapper.userUpdateRequestToUser(userUpdateRequest, user);
@@ -85,6 +99,9 @@ public class UserService implements IUserService {
         // hash password if it presents
         Optional.ofNullable(userUpdateRequest.getPassword())
                 .ifPresent(password -> user.setPassword(passwordEncoder.encode(password)));
+        // Handle image associations
+        Optional.ofNullable(userUpdateRequest.getImageIds())
+                .ifPresent(imageIds -> imageAssociationService.updateImageAssociations(user, imageIds));
         // save update
         User updatedUser = userRepository.save(user);
         return userMapper.userToUserResponse(updatedUser);
@@ -92,8 +109,23 @@ public class UserService implements IUserService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<UserSummaryResponse> getAllUsers(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
+    public Page<UserSummaryResponse> getAllUsers(UserSearchRequest request) {
+        Sort sort = sortUtil.createSort(
+                request.getSortBy(),
+                request.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                request.getPage(),
+                request.getSize(),
+                sort
+        );
+        Specification<User> spec = UserSpecification.builder()
+                .roleId(request.getRoleId())
+                .keyword(request.getKeyword())
+                .status(request.getStatus())
+                .sex(request.getSex())
+                .build();
+        Page<User> userPage = userRepository.findAll(spec, pageable);
         return userPage.map(userMapper::userToUserSummaryResponse);
     }
 
@@ -107,33 +139,9 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithRole(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
         return userMapper.userToUserResponse(user);
-    }
-
-    @Transactional
-    @Override
-    public void activateUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
-        if (Boolean.TRUE.equals(user.getIsActive())) {
-            throw new IllegalStateException("User is already active");
-        }
-        user.setIsActive(Boolean.TRUE);
-        userRepository.save(user);
-    }
-
-    @Transactional
-    @Override
-    public void deactivateUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
-        if (Boolean.FALSE.equals(user.getIsActive())) {
-            throw new IllegalStateException("User is already inactive");
-        }
-        user.setIsActive(Boolean.FALSE);
-        userRepository.save(user);
     }
 
 }
