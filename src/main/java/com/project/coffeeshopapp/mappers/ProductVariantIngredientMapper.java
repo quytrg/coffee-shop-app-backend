@@ -18,7 +18,6 @@ public interface ProductVariantIngredientMapper {
     ProductVariantIngredientResponse productVariantIngredientToProductVariantIngredientResponse(
             ProductVariantIngredient productVariantIngredient
     );
-    @Mapping(source = "ingredients", target = "ingredients")
     List<ProductVariantIngredientResponse> productVariantIngredientsToProductVariantIngredientResponses(
             List<ProductVariantIngredient> productVariantIngredients
     );
