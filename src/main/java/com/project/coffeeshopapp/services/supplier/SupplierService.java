@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.services.supplier;
 
+import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.supplier.SupplierCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplier.SupplierUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
 import com.project.coffeeshopapp.mappers.SupplierMapper;
 import com.project.coffeeshopapp.models.Supplier;
@@ -24,5 +26,18 @@ public class SupplierService implements ISupplierService {
         Supplier savedSupplier = supplierRepository.save(supplier);
         // map a new Supplier to SupplierResponse
         return supplierMapper.supplierToSupplierResponse(savedSupplier);
+    }
+
+    @Override
+    @Transactional
+    public SupplierResponse updateSupplier(Long id, SupplierUpdateRequest supplierUpdateRequest) {
+        // check if supplier ID exists
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("supplier", "Supplier not found with id: " + id));
+        // map SupplierUpdateRequest to Supplier
+        supplierMapper.supplierUpdateRequestToSupplier(supplierUpdateRequest, supplier);
+        // save update
+        Supplier updatedSupplier = supplierRepository.save(supplier);
+        return supplierMapper.supplierToSupplierResponse(updatedSupplier);
     }
 }
