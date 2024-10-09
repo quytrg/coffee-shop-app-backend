@@ -1,15 +1,18 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.supplier.SupplierCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplier.SupplierSearchRequest;
 import com.project.coffeeshopapp.dtos.request.supplier.SupplierUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
+import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
-import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
+import com.project.coffeeshopapp.dtos.response.supplier.SupplierSummaryResponse;
 import com.project.coffeeshopapp.services.supplier.SupplierService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -67,4 +70,17 @@ public class SupplierController {
         );
     }
 
+    @GetMapping
+    public ResponseEntity<SuccessResponse<PaginationResponse<SupplierSummaryResponse>>> getSuppliers(
+            @Valid @ModelAttribute SupplierSearchRequest request) {
+        Page<SupplierSummaryResponse> supplierSummaryResponsePage = supplierService.getSuppliers(request);
+        PaginationResponse<SupplierSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                supplierSummaryResponsePage
+        );
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve paginated suppliers successfully",
+                HttpStatus.OK
+        );
+    }
 }

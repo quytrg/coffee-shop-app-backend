@@ -7,16 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupplierResponse {
+public class SupplierSummaryResponse {
     private Long id;
     private String name;
-    private String description;
     private String address;
     private String phoneNumber;
     private String email;
-    private String otherContactInfo;
-    private String taxCode;
-    private String bankAccount;
-    private String paymentTerms;
     private Double rating;
 }
