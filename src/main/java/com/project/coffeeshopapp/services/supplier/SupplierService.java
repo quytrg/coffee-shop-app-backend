@@ -40,4 +40,22 @@ public class SupplierService implements ISupplierService {
         Supplier updatedSupplier = supplierRepository.save(supplier);
         return supplierMapper.supplierToSupplierResponse(updatedSupplier);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SupplierResponse getSupplier(Long id) {
+        // check if supplier ID exists
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("supplier", "Supplier not found with id: " + id));
+        return supplierMapper.supplierToSupplierResponse(supplier);
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteSupplier(Long id) {
+        // check if supplier ID exists
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("supplier", "Supplier not found with id: " + id));
+        supplierRepository.softDelete(id);
+    }
 }

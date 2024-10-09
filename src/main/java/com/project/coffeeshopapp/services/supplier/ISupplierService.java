@@ -7,4 +7,6 @@ import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
 public interface ISupplierService {
     SupplierResponse createSupplier(SupplierCreateRequest supplierCreateRequest);
     SupplierResponse updateSupplier(Long id, SupplierUpdateRequest supplierUpdateRequest);
+    SupplierResponse getSupplier(Long id);
+    void softDeleteSupplier(Long id);
 }

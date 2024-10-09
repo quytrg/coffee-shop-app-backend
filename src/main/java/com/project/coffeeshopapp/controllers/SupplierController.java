@@ -4,6 +4,7 @@ import com.project.coffeeshopapp.dtos.request.supplier.SupplierCreateRequest;
 import com.project.coffeeshopapp.dtos.request.supplier.SupplierUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
+import com.project.coffeeshopapp.dtos.response.supplier.SupplierResponse;
 import com.project.coffeeshopapp.services.supplier.SupplierService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
@@ -45,4 +46,25 @@ public class SupplierController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<SupplierResponse>> getSupplierById(
+            @PathVariable(name = "id") Long id) {
+        SupplierResponse supplierResponse = supplierService.getSupplier(id);
+        return responseUtil.createSuccessResponse(
+                supplierResponse,
+                "Get supplier successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteSupplier(@PathVariable(name = "id") Long id) {
+        supplierService.softDeleteSupplier(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Supplier successfully deleted",
+                HttpStatus.OK
+        );
+    }
+
 }
