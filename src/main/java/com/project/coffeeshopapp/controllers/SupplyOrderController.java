@@ -45,4 +45,25 @@ public class SupplyOrderController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<SupplyOrderResponse>> getSupplyOrderById(
+            @PathVariable(name = "id") Long id) {
+        SupplyOrderResponse supplyOrderResponse = supplyOrderService.getSupplyOrder(id);
+        return responseUtil.createSuccessResponse(
+                supplyOrderResponse,
+                "Get supply order successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteSupplyOrder(
+            @PathVariable(name = "id") Long id) {
+        supplyOrderService.softDeleteSupplyOrder(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "Supply order was deleted successfully",
+                HttpStatus.OK
+        );
+    }
 }

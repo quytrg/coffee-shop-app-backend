@@ -221,4 +221,22 @@ public class SupplyOrderService implements ISupplyOrderService {
         String dateTimePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmm"));
         return String.format("SO-%s-%04d", dateTimePart, randomNum);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SupplyOrderResponse getSupplyOrder(Long id) {
+        // check if supply order ID exists
+        SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
+        return supplyOrderMapper.supplyOrderToSupplyOrderResponse(supplyOrder);
+    }
+
+    @Override
+    @Transactional
+    public void softDeleteSupplyOrder(Long id) {
+        // check if supply order ID exists
+        SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
+        supplyOrderRepository.softDelete(id);
+    }
 }

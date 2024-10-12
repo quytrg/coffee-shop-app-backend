@@ -7,4 +7,6 @@ import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
 public interface ISupplyOrderService {
     SupplyOrderResponse createSupplyOrder(SupplyOrderCreateRequest supplyOrderCreateRequest);
     SupplyOrderResponse updateSupplyOrder(Long id, SupplyOrderUpdateRequest supplyOrderUpdateRequest);
+    SupplyOrderResponse getSupplyOrder(Long id);
+    void softDeleteSupplyOrder(Long id);
 }
