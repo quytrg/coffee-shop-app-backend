@@ -1,12 +1,19 @@
 package com.project.coffeeshopapp.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "suppliers")
@@ -62,4 +69,11 @@ public class Supplier extends BaseEntity {
     @PositiveOrZero(message = "Rating must be non-negative value")
     @DecimalMax(value = "10.00", message = "Rating cannot exceed 10.00")
     private Double rating;
+
+    @OneToMany(
+            mappedBy = "supplier",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE }
+    )
+    @BatchSize(size = 20)
+    private List<SupplyOrder> supplyOrders = new ArrayList<>();
 }
