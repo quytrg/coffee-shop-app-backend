@@ -2,10 +2,10 @@ package com.project.coffeeshopapp.mappers;
 
 import com.project.coffeeshopapp.constants.AppConstants;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
 import com.project.coffeeshopapp.models.SupplyOrder;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = { SupplyOrderItemMapper.class, SupplierMapper.class })
 public interface SupplyOrderMapper {
@@ -23,4 +23,16 @@ public interface SupplyOrderMapper {
     @Mapping(source = "supplyOrderItems", target = "supplyOrderItems")
     @Mapping(source = "supplier", target = "supplier")
     SupplyOrderResponse supplyOrderToSupplyOrderResponse(SupplyOrder supplyOrder);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "expectedDeliveryDate", source = "expectedDeliveryDate", dateFormat = AppConstants.DATE_FORMAT)
+    @Mapping(target = "supplier", ignore = true)
+    @Mapping(target = "supplyOrderItems", ignore = true)
+    @Mapping(target = "actualDeliveryDate", ignore = true)
+    @Mapping(target = "totalAmount", ignore = true)
+    @Mapping(target = "orderCode", ignore = true)
+    void supplyOrderUpdateRequestToSupplyOrder(
+            SupplyOrderUpdateRequest supplyOrderUpdateRequest,
+            @MappingTarget SupplyOrder supplyOrder
+    );
 }

@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.services.supplyorder;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorderitem.SupplyOrderItemRequest;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
 import com.project.coffeeshopapp.mappers.SupplyOrderItemMapper;
@@ -22,10 +23,7 @@ import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,6 +49,7 @@ public class SupplyOrderService implements ISupplyOrderService {
         SupplyOrder supplyOrder = supplyOrderMapper.supplyOrderCreateRequestToSupplyOrder(supplyOrderCreateRequest);
         supplyOrder.setSupplier(supplier);
 
+        // map Ingredients by ID for quick access
         Map<Long, Ingredient> ingredientMap = getIngredientMap(
                 supplyOrderCreateRequest.getSupplyOrderItems()
         );
@@ -76,8 +75,62 @@ public class SupplyOrderService implements ISupplyOrderService {
         supplyOrder.setOrderCode(orderCode);
 
         // save supply order
-        supplyOrderRepository.save(supplyOrder);
-        return supplyOrderMapper.supplyOrderToSupplyOrderResponse(supplyOrder);
+        SupplyOrder newSupplyOrder = supplyOrderRepository.save(supplyOrder);
+        return supplyOrderMapper.supplyOrderToSupplyOrderResponse(newSupplyOrder);
+    }
+
+    @Override
+    @Transactional
+    public SupplyOrderResponse updateSupplyOrder(Long id, SupplyOrderUpdateRequest supplyOrderUpdateRequest) {
+        // check if supply order ID exists
+        SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
+        // map SupplyOrderUpdateRequest to SupplyOrder (update fields not null from request)
+        supplyOrderMapper.supplyOrderUpdateRequestToSupplyOrder(
+                supplyOrderUpdateRequest,
+                supplyOrder
+        );
+
+        // if supplier is updated
+        Optional.ofNullable(supplyOrderUpdateRequest.getSupplierId())
+                .ifPresent(supplierId -> {
+                    Supplier supplier = supplierRepository.findById(supplierId)
+                            .orElseThrow(() -> new DataNotFoundException("Supplier", "Supplier not found with ID: "
+                                    + supplierId));
+                    supplyOrder.setSupplier(supplier);
+                });
+
+        // if supplyOrderItems are updated
+        Optional.ofNullable(supplyOrderUpdateRequest.getSupplyOrderItems())
+                .ifPresent(supplyOrderItems -> {
+                    // detach existing items
+                    supplyOrder.getSupplyOrderItems().clear();
+
+                    // map Ingredients by ID for quick access
+                    Map<Long, Ingredient> ingredientMap = getIngredientMap(
+                            supplyOrderItems
+                    );
+
+                    // reprocess SupplyOrderItems
+                    List<SupplyOrderItem> updatedSupplyOrderItems = processSupplyOrderItems(
+                            supplyOrderItems,
+                            ingredientMap,
+                            supplyOrder
+                    );
+                    // set supplyOrderItems
+                    supplyOrder.setSupplyOrderItems(updatedSupplyOrderItems);
+
+                    // recalculate total amount
+                    BigDecimal totalAmount = updatedSupplyOrderItems.stream()
+                            .map(SupplyOrderItem::getSubtotal)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    // set totalAmount
+                    supplyOrder.setTotalAmount(totalAmount);
+                });
+
+        // save supply order
+        SupplyOrder updatedSupplyOrder = supplyOrderRepository.save(supplyOrder);
+        return supplyOrderMapper.supplyOrderToSupplyOrderResponse(updatedSupplyOrder);
     }
 
     /**
