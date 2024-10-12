@@ -71,7 +71,8 @@ public class SupplyOrder extends BaseEntity {
 
     @OneToMany(
             mappedBy = "supplyOrder",
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE }
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+            orphanRemoval = true
     )
     @BatchSize(size = 20)
     private List<SupplyOrderItem> supplyOrderItems = new ArrayList<>();

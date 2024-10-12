@@ -118,7 +118,7 @@ public class SupplyOrderService implements ISupplyOrderService {
                             supplyOrder
                     );
                     // set supplyOrderItems
-                    supplyOrder.setSupplyOrderItems(updatedSupplyOrderItems);
+                    supplyOrder.getSupplyOrderItems().addAll(updatedSupplyOrderItems);
 
                     // recalculate total amount
                     BigDecimal totalAmount = updatedSupplyOrderItems.stream()
