@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.dtos.request.supplier;
 
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
 import com.project.coffeeshopapp.enums.RoleSortField;
+import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.enums.SupplierSortField;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,9 @@ public class SupplierSearchRequest extends BasePaginationSortRequest<SupplierSor
     @Override
     protected List<SupplierSortField> initSortBy() {
         return Collections.singletonList(SupplierSortField.NAME);
+    }
+    @Override
+    protected List<SortDirection> initSortDir() {
+        return Collections.singletonList(SortDirection.ASC);
     }
 }
