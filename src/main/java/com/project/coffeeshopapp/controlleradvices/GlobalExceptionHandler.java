@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -279,12 +281,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         if (ex.getCause() instanceof InvalidFormatException invalidFormatException) {
+            Class<?> targetType = invalidFormatException.getTargetType();
+            String invalidValue = invalidFormatException.getValue().toString();
+            String fieldName = invalidFormatException.getPath().get(0).getFieldName();
+
+            // Check if the field causing the issue is related to parse LocalDateTime
+            if (LocalDateTime.class.isAssignableFrom(targetType)) {
+                List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                        ErrorResponse.ErrorDetail.builder()
+                                .field(fieldName)
+                                .message("Invalid date format for field '" + fieldName + "'. Expected format: 'yyyy-MM-dd'T'HH:mm:ss'.")
+                                .build()
+                );
+
+                return responseUtil.createErrorResponse(
+                        "Invalid request body.",
+                        HttpStatus.BAD_REQUEST,
+                        errorDetails
+                );
+            }
 
             // Check if the field causing the issue is related to enum deserialization
-            if (invalidFormatException.getTargetType().isEnum()) {
-                String invalidValue = invalidFormatException.getValue().toString();
-                String fieldName = invalidFormatException.getPath().get(0).getFieldName();
-
+            if (targetType.isEnum()) {
                 // Generic error detail for enum violation without exposing allowed values
                 List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
                         ErrorResponse.ErrorDetail.builder()
@@ -314,20 +332,4 @@ public class GlobalExceptionHandler {
                 errorDetails
         );
     }
-
-//    @ExceptionHandler(InvalidEnumValueException.class)
-//    public ResponseEntity<ErrorResponse> handleInvalidEnumValueException(InvalidEnumValueException ex) {
-//        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
-//                ErrorResponse.ErrorDetail.builder()
-//                        .field(ex.getFieldName())
-//                        .message(ex.getMessage())
-//                        .build()
-//        );
-//        // Handle other HttpMessageNotReadableException causes
-//        return responseUtil.createErrorResponse(
-//                "Invalid request body.",
-//                HttpStatus.BAD_REQUEST,
-//                errorDetails
-//        );
-//    }
 }

@@ -16,6 +16,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,12 +51,10 @@ public class SupplyOrder extends BaseEntity {
     private SupplyOrderStatus status;
 
     @Column(name = "expected_delivery_date")
-    @Temporal(TemporalType.DATE)
-    private Date expectedDeliveryDate;
+    private LocalDateTime expectedDeliveryDate;
 
     @Column(name = "actual_delivery_date")
-    @Temporal(TemporalType.DATE)
-    private Date actualDeliveryDate;
+    private LocalDateTime actualDeliveryDate;
 
     @Column(name = "payment_status")
     @Enumerated(EnumType.STRING)

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class SupplyOrderItemRequest {
     @Max(value = 100, message = "Discount cannot exceed 100%")
     private Integer discount;
 
-    private String expirationDate;
+    private LocalDateTime expirationDate;
 
     @NotNull(message = "Unit is mandatory")
     private SupplyUnit unit;

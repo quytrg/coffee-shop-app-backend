@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class UserResponse {
     private String address;
     private UserStatus status;
     private Boolean sex;
-    private String dateOfBirth;
+    private LocalDateTime dateOfBirth;
     private RoleSummaryResponse role;
     private List<ImageSummaryResponse> images = new ArrayList<>();
 }

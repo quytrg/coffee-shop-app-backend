@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -41,7 +42,7 @@ public class UserUpdateRequest implements PasswordMatchingCheckable {
 
     private Boolean sex;
 
-    private String dateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     private Long roleId;
 

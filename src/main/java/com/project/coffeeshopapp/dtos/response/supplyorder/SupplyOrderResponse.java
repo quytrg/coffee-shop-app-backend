@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class SupplyOrderResponse {
     private Long id;
     private String orderCode;
     private SupplyOrderStatus status;
-    private String expectedDeliveryDate;
+    private LocalDateTime expectedDeliveryDate;
+    private LocalDateTime actualDeliveryDate;
     private PaymentStatus paymentStatus;
     private PaymentMethod paymentMethod;
     private String description;
@@ -29,7 +31,7 @@ public class SupplyOrderResponse {
     private List<SupplyOrderItemResponse> supplyOrderItems = new ArrayList<>();
     private BigDecimal totalAmount;
     private String createdBy;
-    private String createdAt;
+    private LocalDateTime createdAt;
     private String updatedBy;
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 }

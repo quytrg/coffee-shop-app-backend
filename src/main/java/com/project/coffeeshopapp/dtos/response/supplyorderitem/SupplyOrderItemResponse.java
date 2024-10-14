@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class SupplyOrderItemResponse {
     private Integer quantity;
     private Integer discount;
     private BigDecimal subtotal;
-    private String expirationDate;
+    private LocalDateTime expirationDate;
     private SupplyUnit unit;
     private BigDecimal unitValue;
     private SupplyUnit baseUnit;

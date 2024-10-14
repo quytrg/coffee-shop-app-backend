@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +18,11 @@ import java.util.List;
 @NoArgsConstructor
 public class SupplyOrderUpdateRequest {
     private SupplyOrderStatus status;
-    private String expectedDeliveryDate;
+    private LocalDateTime expectedDeliveryDate;
     private PaymentStatus paymentStatus;
     private PaymentMethod paymentMethod;
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
     private Long supplierId;
-    private List<SupplyOrderItemRequest> supplyOrderItems = new ArrayList<>();
+    private List<SupplyOrderItemRequest> supplyOrderItems;
 }

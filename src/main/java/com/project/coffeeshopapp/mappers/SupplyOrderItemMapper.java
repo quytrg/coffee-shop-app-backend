@@ -11,13 +11,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface SupplyOrderItemMapper {
-    @Mapping(target = "expirationDate", source = "expirationDate", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(target = "supplyOrder", ignore = true)
     @Mapping(target = "ingredient", ignore = true)
     @Mapping(target = "subtotal", ignore = true)
     SupplyOrderItem supplyOrderItemRequestToSupplyOrderItem(SupplyOrderItemRequest supplyOrderItemRequest);
 
-    @Mapping(target = "expirationDate", source = "expirationDate", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(source = "ingredient.id", target = "ingredientId")
     @Mapping(source = "ingredient.name", target = "ingredientName")
     SupplyOrderItemResponse supplyOrderItemToSupplyOrderItemResponse(SupplyOrderItem supplyOrderItem);

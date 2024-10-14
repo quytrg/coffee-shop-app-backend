@@ -12,17 +12,14 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = { RoleMapper.class, ImageMapper.class })
 public interface UserMapper {
-    @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "images", ignore = true)
     User userCreateRequestToUser(UserCreateRequest userCreateRequest);
 
-    @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(source = "images", target = "images")
     UserResponse userToUserResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = AppConstants.DATE_FORMAT)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "images", ignore = true)
@@ -32,5 +29,4 @@ public interface UserMapper {
     @Mapping(source = "role.name", target = "roleName")
     @Mapping(source = "images", target = "imageUrls")
     UserSummaryResponse userToUserSummaryResponse(User user);
-
 }

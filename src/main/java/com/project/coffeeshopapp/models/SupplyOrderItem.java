@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -51,8 +52,7 @@ public class SupplyOrderItem extends BaseEntity {
     private BigDecimal subtotal;
 
     @Column(name = "expiration_date")
-    @Temporal(TemporalType.DATE)
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
     @Column(name = "unit")
     @NotNull(message = "Unit is mandatory")

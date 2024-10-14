@@ -14,7 +14,7 @@ public class ErrorResponse {
     private int status;
     private String message;
     @Builder.Default
-    private String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+    private LocalDateTime timestamp = LocalDateTime.now();
     private List<ErrorDetail> errors;
 
     @Data
