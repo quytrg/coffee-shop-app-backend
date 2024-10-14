@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.mappers;
 
-import com.project.coffeeshopapp.constants.AppConstants;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
@@ -32,5 +31,7 @@ public interface SupplyOrderMapper {
             @MappingTarget SupplyOrder supplyOrder
     );
 
+    @Mapping(source = "supplier.id", target = "supplierId")
+    @Mapping(source = "supplier.name", target = "supplierName")
     SupplyOrderSummaryResponse supplyOrderToSupplyOrderSummaryResponse(SupplyOrder supplyOrder);
 }

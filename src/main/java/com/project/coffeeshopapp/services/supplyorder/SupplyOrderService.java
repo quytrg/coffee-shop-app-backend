@@ -2,9 +2,11 @@ package com.project.coffeeshopapp.services.supplyorder;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderSearchRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorderitem.SupplyOrderItemRequest;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
+import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderSummaryResponse;
 import com.project.coffeeshopapp.mappers.SupplyOrderItemMapper;
 import com.project.coffeeshopapp.mappers.SupplyOrderMapper;
 import com.project.coffeeshopapp.models.Ingredient;
@@ -14,7 +16,14 @@ import com.project.coffeeshopapp.models.SupplyOrderItem;
 import com.project.coffeeshopapp.repositories.IngredientRepository;
 import com.project.coffeeshopapp.repositories.SupplierRepository;
 import com.project.coffeeshopapp.repositories.SupplyOrderRepository;
+import com.project.coffeeshopapp.specifications.SupplyOrderSpecification;
+import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +44,8 @@ public class SupplyOrderService implements ISupplyOrderService {
     private final IngredientRepository ingredientRepository;
     private final SupplyOrderMapper supplyOrderMapper;
     private final SupplyOrderItemMapper supplyOrderItemMapper;
-
+    private final PaginationUtil paginationUtil;
+    private final SortUtil sortUtil;
 
     @Override
     @Transactional
@@ -238,5 +248,41 @@ public class SupplyOrderService implements ISupplyOrderService {
         SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
         supplyOrderRepository.softDelete(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SupplyOrderSummaryResponse> getSupplyOrders(SupplyOrderSearchRequest supplyOrderSearchRequest) {
+        Sort sort = sortUtil.createSort(
+                supplyOrderSearchRequest.getSortBy(),
+                supplyOrderSearchRequest.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                supplyOrderSearchRequest.getPage(),
+                supplyOrderSearchRequest.getSize(),
+                sort
+        );
+        Specification<SupplyOrder> specification = SupplyOrderSpecification.builder()
+                .keyword(supplyOrderSearchRequest.getKeyword())
+                .totalAmount(
+                        supplyOrderSearchRequest.getMinTotalAmount(),
+                        supplyOrderSearchRequest.getMaxTotalAmount()
+                )
+                .status(supplyOrderSearchRequest.getStatus())
+                .paymentMethod(supplyOrderSearchRequest.getPaymentMethod())
+                .paymentStatus(supplyOrderSearchRequest.getPaymentStatus())
+                .expectedDeliveryDate(
+                        supplyOrderSearchRequest.getExpectedDeliveryDateFrom(),
+                        supplyOrderSearchRequest.getExpectedDeliveryDateTo()
+                )
+                .actualDeliveryDate(
+                        supplyOrderSearchRequest.getActualDeliveryDateFrom(),
+                        supplyOrderSearchRequest.getActualDeliveryDateTo()
+                )
+                .supplierIds(supplyOrderSearchRequest.getSupplierIds())
+                .ingredientIds(supplyOrderSearchRequest.getIngredientIds())
+                .build();
+        Page<SupplyOrder> supplyOrders = supplyOrderRepository.findAll(specification, pageable);
+        return supplyOrders.map(supplyOrderMapper::supplyOrderToSupplyOrderSummaryResponse);
     }
 }

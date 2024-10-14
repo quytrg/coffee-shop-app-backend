@@ -1,14 +1,18 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
+import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderSearchRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
+import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
+import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderSummaryResponse;
 import com.project.coffeeshopapp.services.supplyorder.SupplyOrderService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -63,6 +67,20 @@ public class SupplyOrderController {
         supplyOrderService.softDeleteSupplyOrder(id);
         return responseUtil.createSuccessResponseWithoutData(
                 "Supply order was deleted successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<PaginationResponse<SupplyOrderSummaryResponse>>> getSupplyOrders(
+            @Valid @ModelAttribute SupplyOrderSearchRequest request) {
+        Page<SupplyOrderSummaryResponse> supplyOrderSummaryResponsePage = supplyOrderService.getSupplyOrders(request);
+        PaginationResponse<SupplyOrderSummaryResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                supplyOrderSummaryResponsePage
+        );
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve paginated supply orders successfully",
                 HttpStatus.OK
         );
     }
