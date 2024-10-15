@@ -1,6 +1,6 @@
 package com.project.coffeeshopapp.dtos.request.supplyorderitem;
 
-import com.project.coffeeshopapp.enums.SupplyUnit;
+import com.project.coffeeshopapp.enums.MeasurementUnit;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,12 +35,9 @@ public class SupplyOrderItemRequest {
     private LocalDateTime expirationDate;
 
     @NotNull(message = "Unit is mandatory")
-    private SupplyUnit unit;
+    private MeasurementUnit unit;
 
     @NotNull(message = "Unit value is mandatory")
     @PositiveOrZero(message = "Unit value must be non-negative value")
     private BigDecimal unitValue;
-
-    @NotNull(message = "Base unit is mandatory")
-    private SupplyUnit baseUnit;
 }

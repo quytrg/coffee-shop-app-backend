@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.models;
 
-import com.project.coffeeshopapp.enums.SupplyUnit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "supplyorder_items")
@@ -54,20 +52,10 @@ public class SupplyOrderItem extends BaseEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @Column(name = "unit")
-    @NotNull(message = "Unit is mandatory")
-    @Enumerated(EnumType.STRING)
-    private SupplyUnit unit;
-
     @Column(name = "unit_value", nullable = false)
     @NotNull(message = "Unit value is mandatory")
     @PositiveOrZero(message = "Unit value must be non-negative value")
     private BigDecimal unitValue;
-
-    @Column(name = "base_unit")
-    @NotNull(message = "Base unit is mandatory")
-    @Enumerated(EnumType.STRING)
-    private SupplyUnit baseUnit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplyorder_id", nullable=false)
@@ -76,4 +64,8 @@ public class SupplyOrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable=false)
     private Ingredient ingredient;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stock_batch_id", referencedColumnName = "id")
+    private StockBatch stockBatch;
 }

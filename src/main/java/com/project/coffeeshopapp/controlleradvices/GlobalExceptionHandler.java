@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.customexceptions.ImageAlreadyAssociatedException;
 import com.project.coffeeshopapp.customexceptions.InvalidParamException;
+import com.project.coffeeshopapp.customexceptions.UnitMismatchException;
 import com.project.coffeeshopapp.dtos.response.api.ErrorResponse;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.ConstraintViolationException;
@@ -326,6 +327,22 @@ public class GlobalExceptionHandler {
                         .build()
         );
         // Handle other HttpMessageNotReadableException causes
+        return responseUtil.createErrorResponse(
+                "Invalid request body.",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
+
+    @ExceptionHandler(UnitMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleUnitMismatchException(UnitMismatchException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("unit")
+                        .message(ex.getMessage())
+                        .build()
+        );
+
         return responseUtil.createErrorResponse(
                 "Invalid request body.",
                 HttpStatus.BAD_REQUEST,

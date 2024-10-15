@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.dtos.request.ingredient;
 
+import com.project.coffeeshopapp.enums.MeasurementUnit;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +21,7 @@ public class IngredientCreateRequest {
 
     @Size(max = 2000, message = "Storage instructions cannot exceed 2000 characters")
     private String storageInstructions;
+
+    @NotNull(message = "Default unit is required")
+    private MeasurementUnit defaultUnit;
 }

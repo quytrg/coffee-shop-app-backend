@@ -18,6 +18,7 @@ public interface SupplyOrderItemMapper {
 
     @Mapping(source = "ingredient.id", target = "ingredientId")
     @Mapping(source = "ingredient.name", target = "ingredientName")
+    @Mapping(source = "ingredient.defaultUnit", target = "defaultUnit")
     SupplyOrderItemResponse supplyOrderItemToSupplyOrderItemResponse(SupplyOrderItem supplyOrderItem);
 
     List<SupplyOrderItemResponse> supplyOrderItemsToSupplyOrderItemResponses(List<SupplyOrderItem> supplyOrderItems);

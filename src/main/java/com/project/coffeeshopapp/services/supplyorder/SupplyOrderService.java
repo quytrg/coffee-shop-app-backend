@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.services.supplyorder;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.UnitMismatchException;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderSearchRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateRequest;
@@ -190,6 +191,12 @@ public class SupplyOrderService implements ISupplyOrderService {
         for (SupplyOrderItemRequest itemRequest : itemRequests) {
             // retrieve Ingredient from ingredientMap by ID
             Ingredient ingredient = ingredientMap.get(itemRequest.getIngredientId());
+
+            // verify that the unit of itemRequest matches the default unit of the ingredient
+            if (!ingredient.getDefaultUnit().equals(itemRequest.getUnit())) {
+                throw new UnitMismatchException("Unit mismatch: Expected unit "
+                        + ingredient.getDefaultUnit() + " for ingredientId " + itemRequest.getIngredientId());
+            }
 
             // Map to SupplyOrderItem entity
             SupplyOrderItem supplyOrderItem = supplyOrderItemMapper
