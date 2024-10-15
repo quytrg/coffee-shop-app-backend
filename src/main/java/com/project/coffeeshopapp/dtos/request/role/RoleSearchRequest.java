@@ -3,6 +3,7 @@ package com.project.coffeeshopapp.dtos.request.role;
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
 import com.project.coffeeshopapp.enums.CategorySortField;
 import com.project.coffeeshopapp.enums.RoleSortField;
+import com.project.coffeeshopapp.enums.SortDirection;
 import lombok.*;
 
 import java.util.Collections;
@@ -17,5 +18,9 @@ public class RoleSearchRequest extends BasePaginationSortRequest<RoleSortField> 
     @Override
     protected List<RoleSortField> initSortBy() {
         return Collections.singletonList(RoleSortField.NAME);
+    }
+    @Override
+    protected List<SortDirection> initSortDir() {
+        return Collections.singletonList(SortDirection.ASC);
     }
 }

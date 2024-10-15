@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.dtos.request.user;
 
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
+import com.project.coffeeshopapp.enums.SortDirection;
 import com.project.coffeeshopapp.enums.UserSortField;
 import com.project.coffeeshopapp.enums.UserStatus;
 import lombok.*;
@@ -21,5 +22,9 @@ public class UserSearchRequest extends BasePaginationSortRequest<UserSortField> 
     @Override
     protected List<UserSortField> initSortBy() {
         return Collections.singletonList(UserSortField.FULL_NAME);
+    }
+    @Override
+    protected List<SortDirection> initSortDir() {
+        return Collections.singletonList(SortDirection.ASC);
     }
 }

@@ -24,7 +24,9 @@ public abstract class BasePaginationSortRequest<T extends BaseEnum> {
     @Setter(AccessLevel.NONE)
     private List<T> sortBy = Collections.emptyList();
 
-    private List<SortDirection> sortDir = Collections.singletonList(SortDirection.ASC);
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private List<SortDirection> sortDir = Collections.emptyList();
 
     // Add a method to get sortBy, ensuring it's initialized if null or empty
     public List<T> getSortBy() {
@@ -43,5 +45,24 @@ public abstract class BasePaginationSortRequest<T extends BaseEnum> {
      * Each subclass must provide its own implementation.
      */
     protected abstract List<T> initSortBy();
+
+
+    // Add a method to get sortDir, ensuring it's initialized if null or empty
+    public List<SortDirection> getSortDir() {
+        if (sortDir == null || sortDir.isEmpty()) {
+            setSortDir(initSortDir()); // Call the method to set the default sortDir
+        }
+        return sortDir;
+    }
+
+    public void setSortDir(List<SortDirection> sortDir) {
+        this.sortDir = (sortDir != null && !sortDir.isEmpty()) ? sortDir : initSortDir();
+    }
+
+    /**
+     * Abstract method to initialize sortDir.
+     * Each subclass must provide its own implementation.
+     */
+    protected abstract List<SortDirection> initSortDir();
 }
 

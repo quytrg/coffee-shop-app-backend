@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class UserCreateRequest implements PasswordMatchingCheckable {
 
     private Boolean sex;
 
-    private String dateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     @NotNull(message = "Role id is required")
     private Long roleId;

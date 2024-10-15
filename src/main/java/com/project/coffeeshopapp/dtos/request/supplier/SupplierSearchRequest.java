@@ -1,8 +1,9 @@
-package com.project.coffeeshopapp.dtos.request.ingredient;
+package com.project.coffeeshopapp.dtos.request.supplier;
 
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
-import com.project.coffeeshopapp.enums.IngredientSortField;
+import com.project.coffeeshopapp.enums.RoleSortField;
 import com.project.coffeeshopapp.enums.SortDirection;
+import com.project.coffeeshopapp.enums.SupplierSortField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,12 +14,14 @@ import java.util.List;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class IngredientSearchRequest extends BasePaginationSortRequest<IngredientSortField> {
+public class SupplierSearchRequest extends BasePaginationSortRequest<SupplierSortField> {
     // Additional search-specific fields
     private String keyword;
+    private Double minRating;
+    private Double maxRating;
     @Override
-    protected List<IngredientSortField> initSortBy() {
-        return Collections.singletonList(IngredientSortField.NAME);
+    protected List<SupplierSortField> initSortBy() {
+        return Collections.singletonList(SupplierSortField.NAME);
     }
     @Override
     protected List<SortDirection> initSortDir() {
