@@ -13,4 +13,5 @@ public interface ISupplyOrderService {
     SupplyOrderResponse getSupplyOrder(Long id);
     void softDeleteSupplyOrder(Long id);
     Page<SupplyOrderSummaryResponse> getSupplyOrders(SupplyOrderSearchRequest supplyOrderSearchRequest);
+    SupplyOrderResponse completeSupplyOrder(Long id);
 }

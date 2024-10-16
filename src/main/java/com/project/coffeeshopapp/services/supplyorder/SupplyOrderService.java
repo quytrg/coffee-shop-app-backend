@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.services.supplyorder;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.InvalidOperationException;
 import com.project.coffeeshopapp.customexceptions.UnitMismatchException;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderCreateRequest;
 import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderSearchRequest;
@@ -8,13 +9,12 @@ import com.project.coffeeshopapp.dtos.request.supplyorder.SupplyOrderUpdateReque
 import com.project.coffeeshopapp.dtos.request.supplyorderitem.SupplyOrderItemRequest;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderResponse;
 import com.project.coffeeshopapp.dtos.response.supplyorder.SupplyOrderSummaryResponse;
+import com.project.coffeeshopapp.enums.SupplyOrderStatus;
 import com.project.coffeeshopapp.mappers.SupplyOrderItemMapper;
 import com.project.coffeeshopapp.mappers.SupplyOrderMapper;
-import com.project.coffeeshopapp.models.Ingredient;
-import com.project.coffeeshopapp.models.Supplier;
-import com.project.coffeeshopapp.models.SupplyOrder;
-import com.project.coffeeshopapp.models.SupplyOrderItem;
+import com.project.coffeeshopapp.models.*;
 import com.project.coffeeshopapp.repositories.IngredientRepository;
+import com.project.coffeeshopapp.repositories.StockBatchRepository;
 import com.project.coffeeshopapp.repositories.SupplierRepository;
 import com.project.coffeeshopapp.repositories.SupplyOrderRepository;
 import com.project.coffeeshopapp.specifications.SupplyOrderSpecification;
@@ -291,5 +291,43 @@ public class SupplyOrderService implements ISupplyOrderService {
                 .build();
         Page<SupplyOrder> supplyOrders = supplyOrderRepository.findAll(specification, pageable);
         return supplyOrders.map(supplyOrderMapper::supplyOrderToSupplyOrderSummaryResponse);
+    }
+
+    @Override
+    @Transactional
+    public SupplyOrderResponse completeSupplyOrder(Long id) {
+        // retrieve the SupplyOrder
+        SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
+
+        // validate current status
+        if (supplyOrder.getStatus().equals(SupplyOrderStatus.COMPLETED) ||
+            supplyOrder.getStatus().equals(SupplyOrderStatus.CANCELLED) ||
+            supplyOrder.getStatus().equals(SupplyOrderStatus.RETURNED)) {
+            throw new InvalidOperationException("Cannot complete order with status " + supplyOrder.getStatus() +
+                    ". Only orders that are not COMPLETED, CANCELLED, or RETURNED can be completed.");
+        }
+
+        // update order status and metadata
+        supplyOrder.setStatus(SupplyOrderStatus.COMPLETED);
+        supplyOrder.setActualDeliveryDate(LocalDateTime.now());
+
+        for (SupplyOrderItem item : supplyOrder.getSupplyOrderItems()) {
+            // Create StockBatch
+            StockBatch stockBatch = new StockBatch();
+            stockBatch.setQuantity( 
+                    BigDecimal.valueOf(item.getQuantity()).multiply(item.getUnitValue())
+            );
+            stockBatch.setIngredient(item.getIngredient());
+            stockBatch.setSupplyOrderItem(item);
+
+            // associate StockBatch with SupplyOrderItem
+            item.setStockBatch(stockBatch);
+        }
+        // persist the updated SupplyOrder
+        SupplyOrder savedOrder = supplyOrderRepository.save(supplyOrder);
+
+        // map to SupplyOrderResponse and return
+        return supplyOrderMapper.supplyOrderToSupplyOrderResponse(savedOrder);
     }
 }

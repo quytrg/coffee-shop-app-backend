@@ -34,9 +34,17 @@ public class SupplyOrderItemRequest {
 
     private LocalDateTime expirationDate;
 
+    /**
+     * The unit of measurement for the item, which must match the ingredient's default unit.
+     */
     @NotNull(message = "Unit is mandatory")
     private MeasurementUnit unit;
-
+    
+    /**
+     * The amount of the ingredient per item, expressed in the ingredient's default unit.
+     * For example, if ordering sugar in 2 kg bags and the default unit is grams,
+     * unitValue should be 2000 (since 1 kg = 1000 grams).
+     */
     @NotNull(message = "Unit value is mandatory")
     @PositiveOrZero(message = "Unit value must be non-negative value")
     private BigDecimal unitValue;

@@ -14,6 +14,7 @@ public interface SupplyOrderItemMapper {
     @Mapping(target = "supplyOrder", ignore = true)
     @Mapping(target = "ingredient", ignore = true)
     @Mapping(target = "subtotal", ignore = true)
+    @Mapping(target = "stockBatch", ignore = true)
     SupplyOrderItem supplyOrderItemRequestToSupplyOrderItem(SupplyOrderItemRequest supplyOrderItemRequest);
 
     @Mapping(source = "ingredient.id", target = "ingredientId")

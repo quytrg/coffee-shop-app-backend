@@ -84,4 +84,15 @@ public class SupplyOrderController {
                 HttpStatus.OK
         );
     }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<SuccessResponse<SupplyOrderResponse>> completeSupplyOrder(
+            @PathVariable Long id) {
+        SupplyOrderResponse supplyOrderResponse = supplyOrderService.completeSupplyOrder(id);
+        return responseUtil.createSuccessResponse(
+                supplyOrderResponse,
+                "Supply order completed successfully",
+                HttpStatus.OK
+        );
+    }
 }

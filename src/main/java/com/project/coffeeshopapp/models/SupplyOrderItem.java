@@ -33,6 +33,9 @@ public class SupplyOrderItem extends BaseEntity {
     @DecimalMax(value = "999999999.99", message = "Price cannot exceed 999,999,999.99")
     private BigDecimal price;
 
+    /**
+     * The number of items.
+     */
     @Column(name = "quantity", nullable = false)
     @NotNull(message = "Quantity is mandatory")
     @PositiveOrZero(message = "Quantity must be non-negative value")
@@ -52,6 +55,11 @@ public class SupplyOrderItem extends BaseEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
+    /**
+     * The amount of the ingredient per item, expressed in the ingredient's default unit.
+     * For example, if ordering sugar in 2 kg bags and the default unit is grams,
+     * unitValue should be 2000 (since 1 kg = 1000 grams).
+     */
     @Column(name = "unit_value", nullable = false)
     @NotNull(message = "Unit value is mandatory")
     @PositiveOrZero(message = "Unit value must be non-negative value")

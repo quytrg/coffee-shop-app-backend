@@ -18,6 +18,7 @@ import java.util.List;
 public class SupplyOrderUpdateRequest {
     private SupplyOrderStatus status;
     private LocalDateTime expectedDeliveryDate;
+    private LocalDateTime actualDeliveryDate;
     private PaymentStatus paymentStatus;
     private PaymentMethod paymentMethod;
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
