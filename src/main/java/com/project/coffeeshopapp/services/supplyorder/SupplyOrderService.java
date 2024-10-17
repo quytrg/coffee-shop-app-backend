@@ -315,7 +315,10 @@ public class SupplyOrderService implements ISupplyOrderService {
         for (SupplyOrderItem item : supplyOrder.getSupplyOrderItems()) {
             // Create StockBatch
             StockBatch stockBatch = new StockBatch();
-            stockBatch.setQuantity( 
+            stockBatch.setInitialQuantity(
+                    BigDecimal.valueOf(item.getQuantity()).multiply(item.getUnitValue())
+            );
+            stockBatch.setRemainingQuantity(
                     BigDecimal.valueOf(item.getQuantity()).multiply(item.getUnitValue())
             );
             stockBatch.setIngredient(item.getIngredient());

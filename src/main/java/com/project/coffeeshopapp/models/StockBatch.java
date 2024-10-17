@@ -24,10 +24,15 @@ public class StockBatch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "quantity", nullable = false)
-    @NotNull(message = "Quantity is mandatory")
-    @PositiveOrZero(message = "Quantity must be non-negative value")
-    private BigDecimal quantity;
+    @Column(name = "initial_quantity", nullable = false)
+    @NotNull(message = "Initial quantity is mandatory")
+    @PositiveOrZero(message = "Initial quantity must be non-negative value")
+    private BigDecimal initialQuantity;
+
+    @Column(name = "remaining_quantity", nullable = false)
+    @NotNull(message = "Remaining quantity is mandatory")
+    @PositiveOrZero(message = "Remaining quantity must be non-negative value")
+    private BigDecimal remainingQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable = false)
