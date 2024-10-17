@@ -1,7 +1,7 @@
 package com.project.coffeeshopapp.services.stockbatch;
 
-import com.project.coffeeshopapp.models.StockBatch;
-import com.project.coffeeshopapp.models.SupplyOrderItem;
+import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 
 public interface IStockBatchService {
+    StockBatchResponse getStockBatchById(Long id);
 }
