@@ -82,4 +82,13 @@ public class StockBatchService implements IStockBatchService {
         StockBatch updatedStockBatch = stockBatchRepository.save(stockBatch);
         return stockBatchMapper.stockBatchToStockBatchResponse(updatedStockBatch);
     }
+
+    @Override
+    @Transactional
+    public void softDeleteStockBatch(Long id) {
+        // check if StockBatch ID exists
+        stockBatchRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("StockBatch", "StockBatch not found with ID: " + id));
+        stockBatchRepository.softDelete(id);
+    }
 }

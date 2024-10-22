@@ -10,4 +10,5 @@ public interface IStockBatchService {
     StockBatchResponse getStockBatchById(Long id);
     Page<StockBatchSummaryResponse> getStockBatches(StockBatchSearchRequest stockBatchSearchRequest);
     StockBatchResponse updateStockBatch(Long id, StockBatchUpdateRequest stockBatchUpdateRequest);
+    void softDeleteStockBatch(Long id);
 }

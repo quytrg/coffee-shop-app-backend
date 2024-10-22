@@ -62,4 +62,13 @@ public class StockBatchController {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<?>> deleteStockBatch(@PathVariable(name = "id") Long id) {
+        stockBatchService.softDeleteStockBatch(id);
+        return responseUtil.createSuccessResponseWithoutData(
+                "StockBatch deleted successfully",
+                HttpStatus.OK
+        );
+    }
 }
