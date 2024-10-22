@@ -1,6 +1,8 @@
 package com.project.coffeeshopapp.mappers;
 
+import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
+import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.models.StockBatch;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -22,4 +24,17 @@ public interface StockBatchMapper {
     @Mapping(source = "supplyOrderItem.supplyOrder.supplier.id", target = "supplierId")
     @Mapping(source = "supplyOrderItem.supplyOrder.supplier.name", target = "supplierName")
     StockBatchResponse stockBatchToStockBatchResponse(StockBatch stockBatch);
+
+    @Mapping(source = "ingredient.id", target = "ingredientId")
+    @Mapping(source = "ingredient.name", target = "ingredientName")
+    @Mapping(source = "ingredient.defaultUnit", target = "defaultUnit")
+    @Mapping(source = "supplyOrderItem.supplyOrder.id", target = "supplyOrderId")
+    @Mapping(source = "supplyOrderItem.supplyOrder.orderCode", target = "supplyOrderCode")
+    @Mapping(source = "supplyOrderItem.supplyOrder.actualDeliveryDate", target = "receivedDate")
+    @Mapping(source = "supplyOrderItem.expirationDate", target = "expirationDate")
+    @Mapping(source = "supplyOrderItem.supplyOrder.supplier.id", target = "supplierId")
+    @Mapping(source = "supplyOrderItem.supplyOrder.supplier.name", target = "supplierName")
+    StockBatchSummaryResponse stockBatchToStockBatchSummaryResponse(StockBatch stockBatch);
+
+    StockBatchSummaryResponse stockBatchSummaryToStockBatchSummaryResponse(StockBatchSummary stockBatchSummary);
 }
