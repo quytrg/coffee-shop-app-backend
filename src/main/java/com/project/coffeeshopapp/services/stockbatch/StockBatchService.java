@@ -1,8 +1,10 @@
 package com.project.coffeeshopapp.services.stockbatch;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.InvalidDataException;
 import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.mappers.StockBatchMapper;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +55,31 @@ public class StockBatchService implements IStockBatchService {
                 pageable
         );
         return stockBatchSummaries.map(stockBatchMapper::stockBatchSummaryToStockBatchSummaryResponse);
+    }
+
+    @Override
+    @Transactional
+    public StockBatchResponse updateStockBatch(Long id, StockBatchUpdateRequest stockBatchUpdateRequest) {
+        // check if StockBatch ID exists
+        StockBatch stockBatch = stockBatchRepository.findByIdWithIngredientAndSupplyOrderItem(id)
+                .orElseThrow(() -> new DataNotFoundException("StockBatch", "StockBatch not found with ID: " + id));
+
+        stockBatchMapper.stockBatchUpdateRequestToStockBatch(
+                stockBatchUpdateRequest,
+                stockBatch
+        );
+
+        // update expirationDate
+        Optional.ofNullable(stockBatchUpdateRequest.getExpirationDate())
+                .ifPresent(newExpirationDate -> {
+                    // check business logic: expirationDate must be after receivedDate
+                    if (newExpirationDate.isBefore(stockBatch.getSupplyOrderItem().getSupplyOrder().getActualDeliveryDate())) {
+                        throw new InvalidDataException("expirationDate", "Expiration date cannot be before received date");
+                    }
+                    stockBatch.getSupplyOrderItem().setExpirationDate(newExpirationDate);
+                });
+
+        StockBatch updatedStockBatch = stockBatchRepository.save(stockBatch);
+        return stockBatchMapper.stockBatchToStockBatchResponse(updatedStockBatch);
     }
 }

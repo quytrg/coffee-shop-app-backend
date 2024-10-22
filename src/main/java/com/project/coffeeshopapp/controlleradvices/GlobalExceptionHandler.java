@@ -362,4 +362,20 @@ public class GlobalExceptionHandler {
                 errorDetails
         );
     }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDataException(InvalidDataException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field(ex.getField())
+                        .message(ex.getMessage())
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Invalid request body.",
+                HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
 }

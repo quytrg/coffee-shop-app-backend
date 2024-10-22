@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
@@ -46,6 +47,18 @@ public class StockBatchController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve paginated stock batches successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<StockBatchResponse>> updateStockBatch(
+            @PathVariable(name = "id") Long id,
+            @Valid @RequestBody StockBatchUpdateRequest stockbatchUpdateRequest) {
+        StockBatchResponse stockbatchResponse = stockBatchService.updateStockBatch(id, stockbatchUpdateRequest);
+        return responseUtil.createSuccessResponse(
+                stockbatchResponse,
+                "StockBatch updated successfully",
                 HttpStatus.OK
         );
     }

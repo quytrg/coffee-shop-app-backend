@@ -1,11 +1,11 @@
 package com.project.coffeeshopapp.mappers;
 
 import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.models.StockBatch;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface StockBatchMapper {
@@ -37,4 +37,12 @@ public interface StockBatchMapper {
     StockBatchSummaryResponse stockBatchToStockBatchSummaryResponse(StockBatch stockBatch);
 
     StockBatchSummaryResponse stockBatchSummaryToStockBatchSummaryResponse(StockBatchSummary stockBatchSummary);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "ingredient", ignore = true)
+    @Mapping(target = "supplyOrderItem", ignore = true)
+    void stockBatchUpdateRequestToStockBatch(
+            StockBatchUpdateRequest stockBatchUpdateRequest,
+            @MappingTarget StockBatch stockBatch
+    );
 }
