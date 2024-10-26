@@ -2,9 +2,12 @@ package com.project.coffeeshopapp.services.stockbatch;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.customexceptions.InvalidDataException;
+import com.project.coffeeshopapp.dtos.projection.StockBatchReport;
 import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
+import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchReportResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.mappers.StockBatchMapper;
@@ -90,5 +93,21 @@ public class StockBatchService implements IStockBatchService {
         stockBatchRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("StockBatch", "StockBatch not found with ID: " + id));
         stockBatchRepository.softDelete(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<StockBatchReportResponse> getStockBatchReport(StockBatchReportSearchRequest request) {
+        Sort sort = sortUtil.createSort(
+                request.getSortBy(),
+                request.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                request.getPage(),
+                request.getSize(),
+                sort
+        );
+        Page<StockBatchReport> stockBatchReports = stockBatchRepository.findAllForReport(request, pageable);
+        return stockBatchReports.map(stockBatchMapper::stockBatchReportToStockBatchReportResponse);
     }
 }

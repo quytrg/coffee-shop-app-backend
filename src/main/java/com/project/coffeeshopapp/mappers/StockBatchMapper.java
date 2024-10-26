@@ -1,7 +1,11 @@
 package com.project.coffeeshopapp.mappers;
 
+import com.project.coffeeshopapp.dtos.projection.StockBatchReport;
 import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
+import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchReportResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.models.StockBatch;
@@ -45,4 +49,12 @@ public interface StockBatchMapper {
             StockBatchUpdateRequest stockBatchUpdateRequest,
             @MappingTarget StockBatch stockBatch
     );
+
+    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "size", ignore = true)
+    @Mapping(target = "sortBy", ignore = true)
+    @Mapping(target = "sortDir", ignore = true)
+    StockBatchSearchRequest stockBatchReportSearchToStockBatchSearchRequest(StockBatchReportSearchRequest stockBatchReportSearchRequest);
+
+    StockBatchReportResponse stockBatchReportToStockBatchReportResponse(StockBatchReport stockBatchReport);
 }

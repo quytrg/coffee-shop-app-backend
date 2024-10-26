@@ -1,9 +1,11 @@
 package com.project.coffeeshopapp.controllers;
 
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
+import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchReportResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchResponse;
 import com.project.coffeeshopapp.dtos.response.stockbatch.StockBatchSummaryResponse;
 import com.project.coffeeshopapp.services.stockbatch.IStockBatchService;
@@ -68,6 +70,21 @@ public class StockBatchController {
         stockBatchService.softDeleteStockBatch(id);
         return responseUtil.createSuccessResponseWithoutData(
                 "StockBatch deleted successfully",
+                HttpStatus.OK
+        );
+    }
+
+    // Endpoint cho báo cáo
+    @GetMapping("/report")
+    public ResponseEntity<SuccessResponse<PaginationResponse<StockBatchReportResponse>>> getStockBatchReport(
+            @Valid @ModelAttribute StockBatchReportSearchRequest request) {
+        Page<StockBatchReportResponse> stockBatchReportPage = stockBatchService.getStockBatchReport(request);
+        PaginationResponse<StockBatchReportResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                stockBatchReportPage
+        );
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve stock batch report successfully",
                 HttpStatus.OK
         );
     }
