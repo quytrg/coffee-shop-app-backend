@@ -23,7 +23,6 @@ public interface SupplyOrderMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "supplier", ignore = true)
     @Mapping(target = "supplyOrderItems", ignore = true)
-    @Mapping(target = "actualDeliveryDate", ignore = true)
     @Mapping(target = "totalAmount", ignore = true)
     @Mapping(target = "orderCode", ignore = true)
     void supplyOrderUpdateRequestToSupplyOrder(

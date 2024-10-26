@@ -1,4 +1,4 @@
-package com.project.coffeeshopapp.dtos.response.supplyorderitem;
+package com.project.coffeeshopapp.dtos.response.stockbatch;
 
 import com.project.coffeeshopapp.enums.MeasurementUnit;
 import lombok.AllArgsConstructor;
@@ -11,16 +11,17 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupplyOrderItemResponse {
+public class StockBatchSummaryResponse {
     private Long id;
     private Long ingredientId;
     private String ingredientName;
     private MeasurementUnit defaultUnit;
-    private BigDecimal price;
-    private Integer quantity;
-    private Integer discount;
-    private BigDecimal subtotal;
+    private BigDecimal initialQuantity;
+    private BigDecimal remainingQuantity;
+    private Long supplyOrderId;
+    private String supplyOrderCode;
+    private LocalDateTime receivedDate;
     private LocalDateTime expirationDate;
-    private BigDecimal unitValue;
-    private String description;
+    private Long supplierId;
+    private String supplierName;
 }

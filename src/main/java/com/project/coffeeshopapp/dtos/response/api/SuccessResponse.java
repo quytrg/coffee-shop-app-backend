@@ -14,5 +14,5 @@ public class SuccessResponse<T> {
     private String message;
     private T data;
     @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
 }

@@ -1,6 +1,5 @@
 package com.project.coffeeshopapp.models;
 
-import com.project.coffeeshopapp.enums.SupplyUnit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "supplyorder_items")
@@ -35,6 +33,9 @@ public class SupplyOrderItem extends BaseEntity {
     @DecimalMax(value = "999999999.99", message = "Price cannot exceed 999,999,999.99")
     private BigDecimal price;
 
+    /**
+     * The number of items.
+     */
     @Column(name = "quantity", nullable = false)
     @NotNull(message = "Quantity is mandatory")
     @PositiveOrZero(message = "Quantity must be non-negative value")
@@ -54,20 +55,15 @@ public class SupplyOrderItem extends BaseEntity {
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate;
 
-    @Column(name = "unit")
-    @NotNull(message = "Unit is mandatory")
-    @Enumerated(EnumType.STRING)
-    private SupplyUnit unit;
-
+    /**
+     * The amount of the ingredient per item, expressed in the ingredient's default unit.
+     * For example, if ordering sugar in 2 kg bags and the default unit is grams,
+     * unitValue should be 2000 (since 1 kg = 1000 grams).
+     */
     @Column(name = "unit_value", nullable = false)
     @NotNull(message = "Unit value is mandatory")
     @PositiveOrZero(message = "Unit value must be non-negative value")
     private BigDecimal unitValue;
-
-    @Column(name = "base_unit")
-    @NotNull(message = "Base unit is mandatory")
-    @Enumerated(EnumType.STRING)
-    private SupplyUnit baseUnit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplyorder_id", nullable=false)
@@ -76,4 +72,8 @@ public class SupplyOrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable=false)
     private Ingredient ingredient;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stock_batch_id", referencedColumnName = "id")
+    private StockBatch stockBatch;
 }

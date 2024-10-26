@@ -1,7 +1,9 @@
 package com.project.coffeeshopapp.models;
 
+import com.project.coffeeshopapp.enums.MeasurementUnit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +39,11 @@ public class Ingredient extends BaseEntity {
     @Size(max = 2000, message = "Storage instructions cannot exceed 2000 characters")
     private String storageInstructions;
 
+    @Column(name = "default_unit", nullable = false)
+    @NotNull(message = "Default unit is mandatory")
+    @Enumerated(EnumType.STRING)
+    private MeasurementUnit defaultUnit;
+
     @OneToMany(
             mappedBy = "ingredient",
             cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
@@ -50,4 +57,11 @@ public class Ingredient extends BaseEntity {
             orphanRemoval = true
     )
     private List<SupplyOrderItem> supplyOrderItems = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "ingredient",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+            orphanRemoval = true
+    )
+    private List<StockBatch> stockBatches = new ArrayList<>();
 }
