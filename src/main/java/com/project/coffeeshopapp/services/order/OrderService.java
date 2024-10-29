@@ -59,11 +59,11 @@ public class OrderService implements IOrderService{
         // set totalAmount
         order.setTotalAmount(totalAmount);
 
-        // calculate change
+        // calculate returnAmount
         BigDecimal returnAmount = order.getReceivedAmount().subtract(totalAmount);
-        // ensure change is non-negative
+        // ensure returnAmount is non-negative
         if (returnAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Change cannot be negative");
+            throw new IllegalArgumentException("Return amount cannot be negative");
         }
         order.setReturnAmount(returnAmount);
 
