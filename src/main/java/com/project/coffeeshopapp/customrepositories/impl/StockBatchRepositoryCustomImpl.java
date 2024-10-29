@@ -6,7 +6,7 @@ import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.mappers.StockBatchMapper;
-import com.project.coffeeshopapp.models.*;
+import com.project.coffeeshopapp.models.StockBatch;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;

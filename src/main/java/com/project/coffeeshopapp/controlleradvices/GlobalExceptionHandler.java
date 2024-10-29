@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -375,6 +376,22 @@ public class GlobalExceptionHandler {
         return responseUtil.createErrorResponse(
                 "Invalid request body.",
                 HttpStatus.BAD_REQUEST,
+                errorDetails
+        );
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
+        List<ErrorResponse.ErrorDetail> errorDetails = Collections.singletonList(
+                ErrorResponse.ErrorDetail.builder()
+                        .field("N/A")
+                        .message(ex.getMessage())
+                        .build()
+        );
+
+        return responseUtil.createErrorResponse(
+                "Conflict occurred while updating the resource. Please try again.",
+                HttpStatus.CONFLICT,
                 errorDetails
         );
     }

@@ -74,4 +74,11 @@ public class ProductVariant extends BaseEntity {
             this.ingredients.addAll(ingredients);
         }
     }
+
+    @OneToMany(
+            mappedBy = "productVariant",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+    )
+    @BatchSize(size = 20)
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

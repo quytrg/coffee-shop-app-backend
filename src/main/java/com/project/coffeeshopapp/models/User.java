@@ -10,7 +10,6 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -80,4 +79,11 @@ public class User extends BaseEntity implements ImageAssociable {
         image.setUser(null);
         image.setImageAssociationType(null);
     }
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH }
+    )
+    @BatchSize(size = 20)
+    private List<Order> orders = new ArrayList<>();
 }
