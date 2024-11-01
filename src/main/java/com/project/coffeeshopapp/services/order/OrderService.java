@@ -2,16 +2,25 @@ package com.project.coffeeshopapp.services.order;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
 import com.project.coffeeshopapp.dtos.request.order.OrderCreateRequest;
+import com.project.coffeeshopapp.dtos.request.order.OrderSearchRequest;
 import com.project.coffeeshopapp.dtos.request.orderitem.OrderItemCreateRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchDeductRequest;
 import com.project.coffeeshopapp.dtos.response.order.OrderResponse;
+import com.project.coffeeshopapp.dtos.response.order.OrderSummaryResponse;
 import com.project.coffeeshopapp.mappers.OrderItemMapper;
 import com.project.coffeeshopapp.mappers.OrderMapper;
 import com.project.coffeeshopapp.models.*;
 import com.project.coffeeshopapp.repositories.OrderRepository;
 import com.project.coffeeshopapp.repositories.ProductVariantRepository;
 import com.project.coffeeshopapp.services.stockbatch.IStockBatchService;
+import com.project.coffeeshopapp.specifications.OrderSpecification;
+import com.project.coffeeshopapp.utils.PaginationUtil;
+import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,6 +43,8 @@ public class OrderService implements IOrderService{
     private final OrderItemMapper orderItemMapper;
     private final IStockBatchService stockBatchService;
     private final OrderRepository orderRepository;
+    private final PaginationUtil paginationUtil;
+    private final SortUtil sortUtil;
 
     @Override
     @Transactional
@@ -192,5 +203,32 @@ public class OrderService implements IOrderService{
                 stockBatchService.deductStockBatch(stockBatchDeductRequest);
             });
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryResponse> getOrders(OrderSearchRequest orderSearchRequest) {
+        Sort sort = sortUtil.createSort(
+                orderSearchRequest.getSortBy(),
+                orderSearchRequest.getSortDir()
+        );
+        Pageable pageable = paginationUtil.createPageable(
+                orderSearchRequest.getPage(),
+                orderSearchRequest.getSize(),
+                sort
+        );
+        Specification<Order> specification = OrderSpecification.builder()
+                .keyword(orderSearchRequest.getKeyword())
+                .paymentMethod(orderSearchRequest.getPaymentMethod())
+                .status(orderSearchRequest.getStatus())
+                .receivedAmount(orderSearchRequest.getMinReceivedAmount(), orderSearchRequest.getMaxReceivedAmount())
+                .returnAmount(orderSearchRequest.getMinReturnAmount(), orderSearchRequest.getMaxReturnAmount())
+                .totalAmount(orderSearchRequest.getMinTotalAmount(), orderSearchRequest.getMaxTotalAmount())
+                .userIds(orderSearchRequest.getUserIds())
+                .createdAt(orderSearchRequest.getCreatedAtFrom(), orderSearchRequest.getCreatedAtTo())
+                .updatedAt(orderSearchRequest.getUpdatedAtFrom(), orderSearchRequest.getUpdatedAtTo())
+                .build();
+        Page<Order> orders = orderRepository.findAll(specification, pageable);
+        return orders.map(orderMapper::orderToOrderSummaryResponse);
     }
 }

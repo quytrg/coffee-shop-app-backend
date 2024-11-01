@@ -2,6 +2,7 @@ package com.project.coffeeshopapp.mappers;
 
 import com.project.coffeeshopapp.dtos.request.order.OrderCreateRequest;
 import com.project.coffeeshopapp.dtos.response.order.OrderResponse;
+import com.project.coffeeshopapp.dtos.response.order.OrderSummaryResponse;
 import com.project.coffeeshopapp.enums.OrderStatus;
 import com.project.coffeeshopapp.models.Order;
 import org.mapstruct.Mapper;
@@ -19,4 +20,6 @@ public interface OrderMapper {
 
     @Mapping(source = "orderItems", target = "orderItems")
     OrderResponse orderToOrderResponse(Order order);
+
+    OrderSummaryResponse orderToOrderSummaryResponse(Order order);
 }
