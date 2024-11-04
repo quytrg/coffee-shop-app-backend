@@ -4,8 +4,8 @@ import com.project.coffeeshopapp.dtos.request.order.OrderCreateRequest;
 import com.project.coffeeshopapp.dtos.request.order.OrderSearchRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.order.OrderResponse;
-import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.order.OrderSummaryResponse;
+import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.services.order.IOrderService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
@@ -47,6 +47,17 @@ public class OrderController {
         return responseUtil.createSuccessResponse(
                 paginationResponse,
                 "Retrieve paginated orders successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<OrderResponse>> getOrderById(
+            @PathVariable(name = "id") Long id) {
+        OrderResponse orderResponse = orderService.getOrder(id);
+        return responseUtil.createSuccessResponse(
+                orderResponse,
+                "Get order successfully",
                 HttpStatus.OK
         );
     }

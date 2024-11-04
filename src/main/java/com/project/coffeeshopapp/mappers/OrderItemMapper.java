@@ -17,7 +17,7 @@ public interface OrderItemMapper {
     OrderItem orderItemCreateRequestToOrderItem(OrderItemCreateRequest orderItemCreateRequest);
 
     @Mapping(source = "productVariant.id", target = "productVariantId")
-    @Mapping(source = "productVariant.product.name", target = "productVariantName")
+    @Mapping(source = "productVariant.product.name", target = "productName")
     @Mapping(source = "productVariant.size", target = "productVariantSize")
     OrderItemResponse orderItemToOrderItemResponse(OrderItem orderItem);
 

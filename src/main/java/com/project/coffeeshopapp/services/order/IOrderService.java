@@ -9,4 +9,5 @@ import org.springframework.data.domain.Page;
 public interface IOrderService {
     OrderResponse createOrder(OrderCreateRequest orderCreateRequest);
     Page<OrderSummaryResponse> getOrders(OrderSearchRequest orderSearchRequest);
+    OrderResponse getOrder(Long orderId);
 }

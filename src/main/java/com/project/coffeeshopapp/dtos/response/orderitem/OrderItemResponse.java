@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class OrderItemResponse {
     private Long id;
     private Long productVariantId;
-    private String productVariantName;
+    private String productName;
     private ProductSize productVariantSize;
     private String description;
     /**

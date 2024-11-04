@@ -231,4 +231,12 @@ public class OrderService implements IOrderService{
         Page<Order> orders = orderRepository.findAll(specification, pageable);
         return orders.map(orderMapper::orderToOrderSummaryResponse);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(Long id) {
+        Order order = orderRepository.findWithDetailsById(id)
+                .orElseThrow(() -> new DataNotFoundException("Order", "Order not found with id: " + id));
+        return orderMapper.orderToOrderResponse(order);
+    }
 }
