@@ -52,11 +52,10 @@ public class UserController {
     public ResponseEntity<SuccessResponse<JwtResponse>> login(
             @Valid @RequestBody UserLoginRequest userLoginRequest,
             HttpServletResponse response) {
-        System.out.println(userLoginRequest);
         JwtResponse jwtResponse = userService.login(userLoginRequest.getPhoneNumber(), userLoginRequest.getPassword());
 
         // Create Cookie from JWT
-        ResponseCookie cookie = ResponseCookie.from("jwtToken", jwtResponse.getToken())
+        ResponseCookie cookie = ResponseCookie.from("token", jwtResponse.getToken())
                 .httpOnly(true)  // prevent XSS
                 .secure(true)    // only HTTPS
                 .path("/")
