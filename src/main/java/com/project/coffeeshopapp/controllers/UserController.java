@@ -7,6 +7,7 @@ import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.dtos.response.role.RoleResponse;
+import com.project.coffeeshopapp.dtos.response.user.AuthResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
@@ -114,6 +115,16 @@ public class UserController {
         return responseUtil.createSuccessResponse(
                 userResponse,
                 "Get user successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<SuccessResponse<AuthResponse>> getAuth() {
+        AuthResponse authResponse = userService.getAuth();
+        return responseUtil.createSuccessResponse(
+                authResponse,
+                "Get auth successfully",
                 HttpStatus.OK
         );
     }

@@ -4,6 +4,7 @@ import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserSearchRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
+import com.project.coffeeshopapp.dtos.response.user.AuthResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
 import org.springframework.data.domain.Page;
@@ -16,4 +17,5 @@ public interface IUserService {
     Page<UserSummaryResponse> getAllUsers(UserSearchRequest request);
     void softDeleteUser(Long id);
     UserResponse getUserById(Long id);
+    AuthResponse getAuth();
 }

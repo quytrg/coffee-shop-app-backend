@@ -1,10 +1,12 @@
 package com.project.coffeeshopapp.services.user;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.UnauthorizedException;
 import com.project.coffeeshopapp.dtos.request.user.UserCreateRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserSearchRequest;
 import com.project.coffeeshopapp.dtos.request.user.UserUpdateRequest;
 import com.project.coffeeshopapp.dtos.response.jwt.JwtResponse;
+import com.project.coffeeshopapp.dtos.response.user.AuthResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserResponse;
 import com.project.coffeeshopapp.dtos.response.user.UserSummaryResponse;
 import com.project.coffeeshopapp.mappers.UserMapper;
@@ -26,6 +28,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,6 +145,27 @@ public class UserService implements IUserService {
         User user = userRepository.findByIdWithRole(id)
                 .orElseThrow(() -> new DataNotFoundException("user", "User not found with id: " + id));
         return userMapper.userToUserResponse(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AuthResponse getAuth() {
+        // retrieves auth
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // check if the user is authenticated
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException("User is not authenticated");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails userDetails) {
+            User user = userDetails.getUser();
+            return userMapper.userToAuthResponse(user);
+        }
+        else {
+            throw new UnauthorizedException("Invalid user details");
+        }
     }
 
 }
