@@ -2,11 +2,15 @@ package com.project.coffeeshopapp.controllers;
 
 import com.project.coffeeshopapp.dtos.request.order.OrderCreateRequest;
 import com.project.coffeeshopapp.dtos.request.order.OrderSearchRequest;
+import com.project.coffeeshopapp.dtos.request.orderitem.OrderItemReportSearchRequest;
 import com.project.coffeeshopapp.dtos.response.api.SuccessResponse;
 import com.project.coffeeshopapp.dtos.response.order.OrderResponse;
 import com.project.coffeeshopapp.dtos.response.order.OrderSummaryResponse;
+import com.project.coffeeshopapp.dtos.response.orderitem.OrderItemReportResponse;
 import com.project.coffeeshopapp.dtos.response.pagination.PaginationResponse;
 import com.project.coffeeshopapp.services.order.IOrderService;
+import com.project.coffeeshopapp.services.orderitem.IOrderItemService;
+import com.project.coffeeshopapp.services.orderitem.OrderItemService;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -25,6 +29,7 @@ public class OrderController {
     private final IOrderService orderService;
     private final ResponseUtil responseUtil;
     private final PaginationUtil paginationUtil;
+    private final IOrderItemService orderItemService;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<OrderResponse>> createOrder(
@@ -58,6 +63,20 @@ public class OrderController {
         return responseUtil.createSuccessResponse(
                 orderResponse,
                 "Get order successfully",
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/order-items/report")
+    public ResponseEntity<SuccessResponse<PaginationResponse<OrderItemReportResponse>>> getOrderItemsReport(
+            @Valid @ModelAttribute OrderItemReportSearchRequest request) {
+        Page<OrderItemReportResponse> orderItemReportResponsePage = orderItemService.getOrderItemsReport(request);
+        PaginationResponse<OrderItemReportResponse> paginationResponse = paginationUtil.createPaginationResponse(
+                orderItemReportResponsePage
+        );
+        return responseUtil.createSuccessResponse(
+                paginationResponse,
+                "Retrieve paginated order items report successfully",
                 HttpStatus.OK
         );
     }

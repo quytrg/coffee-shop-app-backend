@@ -1,10 +1,13 @@
 package com.project.coffeeshopapp.mappers;
 
+import com.project.coffeeshopapp.dtos.projection.OrderItemReport;
 import com.project.coffeeshopapp.dtos.request.orderitem.OrderItemCreateRequest;
+import com.project.coffeeshopapp.dtos.response.orderitem.OrderItemReportResponse;
 import com.project.coffeeshopapp.dtos.response.orderitem.OrderItemResponse;
 import com.project.coffeeshopapp.models.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
 
 import java.util.List;
 
@@ -22,4 +25,6 @@ public interface OrderItemMapper {
     OrderItemResponse orderItemToOrderItemResponse(OrderItem orderItem);
 
     List<OrderItemResponse> orderItemsToOrderItemResponses(List<OrderItem> orderItems);
+
+    OrderItemReportResponse orderItemReportToOrderItemReportResponse(OrderItemReport orderItemReport);
 }
