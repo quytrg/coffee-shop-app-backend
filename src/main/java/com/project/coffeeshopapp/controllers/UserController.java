@@ -128,4 +128,25 @@ public class UserController {
                 HttpStatus.OK
         );
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse<Void>> logout(HttpServletResponse response) {
+        // create a cookie with the same name and set its maxAge to 0 to delete it
+        ResponseCookie cookie = ResponseCookie.from("token", "")
+                .httpOnly(true) // prevent XSS
+                .secure(true) // only HTTPS
+                .path("/")
+                .maxAge(0) // instruct browser to delete the cookie
+                .sameSite("Strict") // prevent CSRF
+                .build();
+
+        // add the cookie to the response, effectively deleting it on the client side
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return responseUtil.createSuccessResponse(
+                null,
+                "Logout successful",
+                HttpStatus.OK
+        );
+    }
 }
