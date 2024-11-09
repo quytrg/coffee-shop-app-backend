@@ -19,6 +19,8 @@ public class ProductUpdateRequest {
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
+    private Long position;
+
     private ProductStatus status;
 
     private Long categoryId;

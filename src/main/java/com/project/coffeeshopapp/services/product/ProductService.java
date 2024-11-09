@@ -36,7 +36,6 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final PaginationUtil paginationUtil;
     private final SortUtil sortUtil;
-    private final IImageService imageService;
     private final IImageAssociationService imageAssociationService;
 
     @Override
@@ -50,6 +49,12 @@ public class ProductService implements IProductService {
                 .orElseThrow(() -> new DataNotFoundException("category", "Category not found with id: " + productCreateRequest.getCategoryId()));
         // set category for product
         product.setCategory(category);
+
+        // auto increment position if it does not exist
+        if (product.getPosition() == null) {
+            Long maxPosition = productRepository.findMaxPositionByCategoryId(product.getCategory().getId());
+            product.setPosition(maxPosition != null ? maxPosition + 1 : 1L);
+        }
 
         // associate images with product
         imageAssociationService.createImageAssociations(product, productCreateRequest.getImageIds());
@@ -95,9 +100,10 @@ public class ProductService implements IProductService {
         );
 
         Specification<Product> spec = ProductSpecification.builder()
-                .categoryId(request.getCategoryId())
+                .categoryIds(request.getCategoryIds())
                 .keyword(request.getKeyword())
                 .status(request.getStatus())
+                .position(request.getMinPosition(), request.getMaxPosition())
                 .build();
 
         Page<Product> products = productRepository.findAll(spec, pageable);

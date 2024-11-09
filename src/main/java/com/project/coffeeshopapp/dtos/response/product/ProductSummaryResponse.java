@@ -13,6 +13,7 @@ import java.util.List;
 public class ProductSummaryResponse {
     private Long id;
     private String name;
+    private Long position;
     private List<String> imageUrls;
     private ProductStatus status;
     private Long categoryId;

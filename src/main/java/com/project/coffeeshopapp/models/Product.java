@@ -35,6 +35,9 @@ public class Product extends BaseEntity implements ImageAssociable {
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
+    @Column(name = "position", nullable = false)
+    private Long position;
+
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
