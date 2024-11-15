@@ -26,6 +26,8 @@ public class ProductCreateRequest {
     @NotNull(message = "Product status is required")
     private ProductStatus status;
 
+    private Long position;
+
     @NotNull(message = "Product ID is required")
     private Long categoryId;
 

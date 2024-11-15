@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/api/images")
+@RequestMapping("/${api.prefix}/images")
 public class ImageController {
     private final IImageService imageService;
     private final ResponseUtil responseUtil;

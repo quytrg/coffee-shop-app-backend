@@ -34,7 +34,6 @@ public class ProductController {
     private final ResponseUtil responseUtil;
     private final PaginationUtil paginationUtil;
     private final ProductVariantService productVariantService;
-    private final ProductVariantRepository productVariantRepository;
 
     @PostMapping()
     public ResponseEntity<SuccessResponse<ProductResponse>> createProduct(

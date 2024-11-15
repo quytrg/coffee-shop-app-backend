@@ -17,16 +17,18 @@ import java.util.List;
 @ToString(callSuper = true)
 public class ProductSearchRequest extends BasePaginationSortRequest<ProductSortField> {
     // Additional search-specific fields
-    private String keyword;
-    @PositiveOrZero(message = "Catgory ID must be a zero or positive number")
-    private Long categoryId;
+    private String keyword; // productName, categoryName, description
+    private List<Long> categoryIds;
     private ProductStatus status;
+    private Long minPosition;
+    private Long maxPosition;
+
     @Override
     protected List<ProductSortField> initSortBy() {
-        return Collections.singletonList(ProductSortField.NAME);
+        return Collections.singletonList(ProductSortField.UPDATED_AT);
     }
     @Override
     protected List<SortDirection> initSortDir() {
-        return Collections.singletonList(SortDirection.ASC);
+        return Collections.singletonList(SortDirection.DESC);
     }
 }

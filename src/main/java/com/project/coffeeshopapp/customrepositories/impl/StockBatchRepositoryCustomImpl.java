@@ -6,7 +6,7 @@ import com.project.coffeeshopapp.dtos.projection.StockBatchSummary;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.mappers.StockBatchMapper;
-import com.project.coffeeshopapp.models.*;
+import com.project.coffeeshopapp.models.StockBatch;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -95,7 +95,7 @@ public class StockBatchRepositoryCustomImpl implements StockBatchRepositoryCusto
         List<StockBatchSummary> resultList = typedQuery.getResultList();
 
         // Create Count Query to calculate total number of records
-        Long total = getCount(cb, root, supplyOrderItemJoin, supplyOrderJoin, supplierJoin, ingredientJoin, request);
+        Long total = getCount(cb, request);
 
         return new PageImpl<>(resultList, pageable, total);
     }
@@ -199,12 +199,7 @@ public class StockBatchRepositoryCustomImpl implements StockBatchRepositoryCusto
     /**
      * Create a Count Query to calculate the total number of records that satisfy the filter conditions.
      */
-    private Long getCount(CriteriaBuilder cb, Root<StockBatch> root,
-                          Join<StockBatch, Object> supplyOrderItemJoin,
-                          Join<Object, Object> supplyOrderJoin,
-                          Join<Object, Object> supplierJoin,
-                          Join<StockBatch, Object> ingredientJoin,
-                          StockBatchSearchRequest request) {
+    private Long getCount(CriteriaBuilder cb, StockBatchSearchRequest request) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<StockBatch> countRoot = countQuery.from(StockBatch.class);
 
@@ -296,7 +291,7 @@ public class StockBatchRepositoryCustomImpl implements StockBatchRepositoryCusto
         List<StockBatchReport> resultList = typedQuery.getResultList();
 
         // Create Count Query to calculate total number of records
-        Long total = getReportCount(request);
+        Long total = getReportCount(cb, request);
 
         return new PageImpl<>(resultList, pageable, total);
     }
@@ -385,8 +380,7 @@ public class StockBatchRepositoryCustomImpl implements StockBatchRepositoryCusto
         return orders;
     }
 
-    private Long getReportCount(StockBatchReportSearchRequest request) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    private Long getReportCount(CriteriaBuilder cb, StockBatchReportSearchRequest request) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<StockBatch> countRoot = countQuery.from(StockBatch.class);
 

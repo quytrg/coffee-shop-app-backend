@@ -21,4 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @EntityGraph(attributePaths = {"category"}, type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT p FROM Product p WHERE p.id = :productId")
     Optional<Product> findByIdWithCategory(@Param("productId") Long productId);
+
+    @Query("SELECT MAX(p.position) FROM Product p WHERE p.category.id = :categoryId")
+    Long findMaxPositionByCategoryId(@Param("categoryId") Long categoryId);
 }

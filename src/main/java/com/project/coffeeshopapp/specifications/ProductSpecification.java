@@ -4,6 +4,8 @@ import com.project.coffeeshopapp.enums.ProductStatus;
 import com.project.coffeeshopapp.models.Product;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class ProductSpecification {
 
     private Specification<Product> spec;
@@ -16,12 +18,11 @@ public class ProductSpecification {
         this.spec = Specification.where(null);
     }
 
-    public ProductSpecification categoryId(Long categoryId) {
-        if (categoryId != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> {
-                // Perform a fetch join to eagerly load Category
-                return criteriaBuilder.equal(root.get("category").get("id"), categoryId);
-            });
+    public ProductSpecification categoryIds(List<Long> categoryIds) {
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    root.get("category").get("id").in(categoryIds)
+            );
         }
         return this;
     }
@@ -32,6 +33,7 @@ public class ProductSpecification {
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.or(
                             criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), likePattern),
+                            criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("name")), likePattern),
                             criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), likePattern)
                     )
             );
@@ -45,6 +47,23 @@ public class ProductSpecification {
                 criteriaBuilder.equal(root.get("status"), status)
             );
         }
+        return this;
+    }
+
+    public ProductSpecification position(Long minPosition, Long maxPosition) {
+        // Minimum position filter
+        if (minPosition != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("position"), minPosition)
+            );
+        }
+        // Maximum position filter
+        if (maxPosition != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("position"), maxPosition)
+            );
+        }
+
         return this;
     }
 

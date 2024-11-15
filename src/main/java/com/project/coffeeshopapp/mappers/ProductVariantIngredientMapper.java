@@ -15,6 +15,7 @@ public interface ProductVariantIngredientMapper {
     );
     @Mapping(source = "ingredient.id", target = "ingredientId")
     @Mapping(source = "ingredient.name", target = "ingredientName")
+    @Mapping(source = "ingredient.defaultUnit", target = "unit")
     ProductVariantIngredientResponse productVariantIngredientToProductVariantIngredientResponse(
             ProductVariantIngredient productVariantIngredient
     );

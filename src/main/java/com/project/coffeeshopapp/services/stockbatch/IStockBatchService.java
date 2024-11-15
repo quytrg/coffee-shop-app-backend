@@ -1,5 +1,6 @@
 package com.project.coffeeshopapp.services.stockbatch;
 
+import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchDeductRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchReportSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchSearchRequest;
 import com.project.coffeeshopapp.dtos.request.stockbatch.StockBatchUpdateRequest;
@@ -14,4 +15,10 @@ public interface IStockBatchService {
     StockBatchResponse updateStockBatch(Long id, StockBatchUpdateRequest stockBatchUpdateRequest);
     void softDeleteStockBatch(Long id);
     Page<StockBatchReportResponse> getStockBatchReport(StockBatchReportSearchRequest stockBatchReportSearchRequest);
+    /**
+     * Deducts the specified quantity of an ingredient from available StockBatches.
+     *
+     * @param request The request containing ingredientId and quantity to deduct.
+     */
+    void deductStockBatch(StockBatchDeductRequest request);
 }

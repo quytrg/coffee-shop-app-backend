@@ -47,10 +47,6 @@ public class ProductVariantIngredient extends BaseEntity {
     @Positive(message = "Quantity must be positive")
     private BigDecimal quantity;
 
-    @Column(name = "unit", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private MeasurementUnit unit;
-
     @Column(name = "preparation_order", nullable = false)
     private Integer preparationOrder;
 

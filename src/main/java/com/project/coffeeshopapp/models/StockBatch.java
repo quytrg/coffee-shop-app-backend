@@ -40,4 +40,7 @@ public class StockBatch extends BaseEntity {
 
     @OneToOne(mappedBy = "stockBatch", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private SupplyOrderItem supplyOrderItem;
+
+    @Version
+    private Long version;
 }

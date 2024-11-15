@@ -1,6 +1,7 @@
 package com.project.coffeeshopapp.services.productvariant;
 
 import com.project.coffeeshopapp.customexceptions.DataNotFoundException;
+import com.project.coffeeshopapp.customexceptions.UnitMismatchException;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantCreateRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantSearchRequest;
 import com.project.coffeeshopapp.dtos.request.productvariant.ProductVariantUpdateRequest;
@@ -113,6 +114,13 @@ public class ProductVariantService implements IProductVariantService {
 
         for (ProductVariantIngredientRequest request : requests) {
             Ingredient ingredient = ingredientMap.get(request.getIngredientId());
+
+            // verify that the unit of request matches the default unit of the ingredient
+            if (!ingredient.getDefaultUnit().equals(request.getUnit())) {
+                throw new UnitMismatchException("Unit mismatch: Expected unit "
+                        + ingredient.getDefaultUnit() + " for ingredientId " + request.getIngredientId());
+            }
+
             ProductVariantIngredient pvi = productVariantIngredientMapper
                     .productVariantIngredientRequestToProductVariantIngredient(request);
             pvi.setIngredient(ingredient);

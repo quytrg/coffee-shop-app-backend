@@ -17,6 +17,7 @@ public class ProductResponse {
     private Long id;
     private String name;
     private String description;
+    private Long position;
     private ProductStatus status;
     private CategorySummaryResponse category;
     private List<ImageSummaryResponse> images = new ArrayList<>();

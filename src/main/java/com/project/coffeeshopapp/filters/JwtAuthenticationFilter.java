@@ -6,6 +6,7 @@ import com.project.coffeeshopapp.utils.JwtUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -51,11 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            final String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new UnauthorizedException("Unauthorized");
+
+            // Extract token from cookies
+            String token = extractTokenFromCookies(request);
+
+            if (token == null || token.isEmpty()) {
+                throw new UnauthorizedException("Unauthorized: Token is missing");
             }
-            final String token = authHeader.substring(7);
+            
             final String phoneNumber = jwtUtil.extractPhoneNumber(token);
             if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(phoneNumber);
@@ -79,10 +83,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Checks if the current request should bypass the JWT authentication.
+     *
+     * @param request the incoming HttpServletRequest
+     * @return true if the request matches any bypass criteria, otherwise false
+     */
     private boolean isBypassToken(@NonNull  HttpServletRequest request) {
         return bypassTokens.stream().anyMatch(
                 pair -> request.getServletPath().contains(pair.getFirst()) &&
                         request.getMethod().equals(pair.getSecond())
         );
+    }
+
+    /**
+     * Extracts the JWT token from the 'token' cookie.
+     *
+     * @param request the incoming HttpServletRequest
+     * @return the JWT token if present, otherwise null
+     */
+    private String extractTokenFromCookies(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie cookie : request.getCookies()) {
+            if ("token".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
