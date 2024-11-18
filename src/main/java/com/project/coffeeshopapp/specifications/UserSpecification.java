@@ -4,6 +4,8 @@ import com.project.coffeeshopapp.enums.UserStatus;
 import com.project.coffeeshopapp.models.User;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class UserSpecification {
     private Specification<User> spec;
 
@@ -53,6 +55,15 @@ public class UserSpecification {
         if (sex != null) {
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get("sex"), sex)
+            );
+        }
+        return this;
+    }
+
+    public UserSpecification roleIds(List<Long> roleIds) {
+        if (roleIds != null && !roleIds.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    root.get("role").get("id").in(roleIds)
             );
         }
         return this;

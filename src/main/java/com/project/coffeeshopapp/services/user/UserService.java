@@ -127,6 +127,7 @@ public class UserService implements IUserService {
                 .keyword(request.getKeyword())
                 .status(request.getStatus())
                 .sex(request.getSex())
+                .roleIds(request.getRoleIds())
                 .build();
         Page<User> userPage = userRepository.findAll(spec, pageable);
         return userPage.map(userMapper::userToUserSummaryResponse);
