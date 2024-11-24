@@ -14,12 +14,14 @@ import com.project.coffeeshopapp.models.Role;
 import com.project.coffeeshopapp.models.User;
 import com.project.coffeeshopapp.repositories.PermissionRepository;
 import com.project.coffeeshopapp.repositories.RoleRepository;
+import com.project.coffeeshopapp.specifications.RoleSpecification;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,12 @@ public class RoleService implements IRoleService {
                 request.getSize(),
                 sort
         );
-        Page<Role> rolePage = roleRepository.findAll(pageable);
+        Specification<Role> specification = RoleSpecification.builder()
+                .keyword(request.getKeyword())
+                .status(request.getStatus())
+                .permissionIds(request.getPermissionIds())
+                .build();
+        Page<Role> rolePage = roleRepository.findAll(specification, pageable);
         return rolePage.map(roleMapper::roleToRoleSummaryResponse);
     }
 
