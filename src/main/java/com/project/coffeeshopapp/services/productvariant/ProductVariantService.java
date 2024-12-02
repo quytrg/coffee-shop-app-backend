@@ -17,12 +17,14 @@ import com.project.coffeeshopapp.models.ProductVariantIngredient;
 import com.project.coffeeshopapp.repositories.IngredientRepository;
 import com.project.coffeeshopapp.repositories.ProductRepository;
 import com.project.coffeeshopapp.repositories.ProductVariantRepository;
+import com.project.coffeeshopapp.specifications.ProductVariantSpecification;
 import com.project.coffeeshopapp.utils.PaginationUtil;
 import com.project.coffeeshopapp.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -144,7 +146,12 @@ public class ProductVariantService implements IProductVariantService {
                 productVariantSearchRequest.getSize(),
                 sort
         );
-        Page<ProductVariant> productVariants = productVariantRepository.findByProductId(productId, pageable);
+        Specification<ProductVariant> specification = ProductVariantSpecification.builder()
+                .productId(productId)
+                .keyword(productVariantSearchRequest.getKeyword())
+                .status(productVariantSearchRequest.getStatus())
+                .build();
+        Page<ProductVariant> productVariants = productVariantRepository.findAll(specification, pageable);
         return productVariants.map(productVariantMapper::productVariantToProductVariantSummaryResponse);
     }
 

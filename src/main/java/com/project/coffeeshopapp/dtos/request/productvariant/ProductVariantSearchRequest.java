@@ -3,6 +3,7 @@ package com.project.coffeeshopapp.dtos.request.productvariant;
 import com.project.coffeeshopapp.dtos.request.base.BasePaginationSortRequest;
 import com.project.coffeeshopapp.enums.ProductStatus;
 import com.project.coffeeshopapp.enums.ProductVariantSortField;
+import com.project.coffeeshopapp.enums.ProductVariantStatus;
 import com.project.coffeeshopapp.enums.SortDirection;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.List;
 public class ProductVariantSearchRequest extends BasePaginationSortRequest<ProductVariantSortField> {
     // Additional search-specific fields
     private String keyword;
-    private ProductStatus status;
+    private ProductVariantStatus status;
     @Override
     protected List<ProductVariantSortField> initSortBy() {
         return Collections.singletonList(ProductVariantSortField.PRICE);
