@@ -26,7 +26,7 @@ public class ProductVariantSpecification {
 
     public ProductVariantSpecification keyword(String keyword) {
         if (keyword != null && !keyword.trim().isEmpty()) {
-            String likePattern = "%" + keyword.toLowerCase() + "%";
+            String likePattern = "%" + keyword.trim().toLowerCase() + "%";
             spec = spec.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.or(
                             criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), likePattern)
