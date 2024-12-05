@@ -96,6 +96,10 @@ public class SupplyOrderService implements ISupplyOrderService {
         // check if supply order ID exists
         SupplyOrder supplyOrder = supplyOrderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("SupplyOrder", "SupplyOrder not found with ID: " + id));
+        // only allowed to update uncompleted Supply Order
+        if (supplyOrder.getStatus() == SupplyOrderStatus.COMPLETED) {
+            throw new InvalidOperationException("Only allowed to update uncompleted Supply Order");
+        }
         // map SupplyOrderUpdateRequest to SupplyOrder (update fields not null from request)
         supplyOrderMapper.supplyOrderUpdateRequestToSupplyOrder(
                 supplyOrderUpdateRequest,
