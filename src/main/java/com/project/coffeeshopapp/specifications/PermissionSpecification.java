@@ -1,21 +1,20 @@
 package com.project.coffeeshopapp.specifications;
 
-import com.project.coffeeshopapp.enums.CategoryStatus;
-import com.project.coffeeshopapp.models.Category;
+import com.project.coffeeshopapp.models.Permission;
 import org.springframework.data.jpa.domain.Specification;
 
-public class CategorySpecification {
-    private Specification<Category> spec;
+public class PermissionSpecification {
+    private Specification<Permission> spec;
 
-    public static CategorySpecification builder() {
-        return new CategorySpecification();
+    public static PermissionSpecification builder() {
+        return new PermissionSpecification();
     }
 
-    private CategorySpecification() {
+    private PermissionSpecification() {
         this.spec = Specification.where(null);
     }
 
-    public CategorySpecification keyword(String keyword) {
+    public PermissionSpecification keyword(String keyword) {
         if (keyword != null && !keyword.trim().isEmpty()) {
             String likePattern = "%" + keyword.trim().toLowerCase() + "%";
             spec = spec.and((root, query, criteriaBuilder) ->
@@ -28,16 +27,7 @@ public class CategorySpecification {
         return this;
     }
 
-    public CategorySpecification status(CategoryStatus status) {
-        if (status != null) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("status"), status)
-            );
-        }
-        return this;
-    }
-
-    public Specification<Category> build() {
+    public Specification<Permission> build() {
         return spec;
     }
 }

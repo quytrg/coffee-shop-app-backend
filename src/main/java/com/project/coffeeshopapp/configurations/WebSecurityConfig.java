@@ -39,6 +39,9 @@ public class WebSecurityConfig {
                                         String.format("%s/users/login", apiPrefix)
                                 ).permitAll()
                                 .requestMatchers(
+                                        String.format("%s/users/logout", apiPrefix)
+                                ).permitAll()
+                                .requestMatchers(
                                         HttpMethod.GET,
                                         String.format("%s/users/**", apiPrefix)
                                 ).hasAnyAuthority("USER_VIEW")

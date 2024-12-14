@@ -114,7 +114,7 @@ public class StockBatchRepositoryCustomImpl implements StockBatchRepositoryCusto
 
         // keyword
         if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
-            String likePattern = "%" + request.getKeyword().toLowerCase() + "%";
+            String likePattern = "%" + request.getKeyword().trim().toLowerCase() + "%";
             Predicate ingredientNameLike = cb.like(cb.lower(ingredientJoin.get("name")), likePattern);
             Predicate supplierNameLike = cb.like(cb.lower(supplierJoin.get("name")), likePattern);
             Predicate orderCodeLike = cb.like(cb.lower(supplyOrderJoin.get("orderCode")), likePattern);

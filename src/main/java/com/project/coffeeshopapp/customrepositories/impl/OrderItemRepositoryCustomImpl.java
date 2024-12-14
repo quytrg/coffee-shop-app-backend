@@ -116,7 +116,7 @@ public class OrderItemRepositoryCustomImpl implements OrderItemRepositoryCustom 
 
         // keyword
         if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
-            String likePattern = "%" + request.getKeyword().toLowerCase() + "%";
+            String likePattern = "%" + request.getKeyword().trim().toLowerCase() + "%";
             Predicate productNameLike = cb.like(cb.lower(productJoin.get("name")), likePattern);
             Predicate orderItemDescriptionLike = cb.like(cb.lower(root.get("description")), likePattern);
             Predicate orderCodeLike = cb.like(cb.lower(orderJoin.get("orderCode")), likePattern);

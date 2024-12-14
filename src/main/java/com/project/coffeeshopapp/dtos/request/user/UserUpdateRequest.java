@@ -22,7 +22,6 @@ public class UserUpdateRequest implements PasswordMatchingCheckable {
     private String fullName;
 
     @Size(min = 9, max = 10, message = "Phone number length must be between {min} and {max} digits")
-    @UniquePhoneNumber
     private String phoneNumber;
 
     @Size(min = 5, max = 100, message = "Email length must be between {min} and {max} characters")

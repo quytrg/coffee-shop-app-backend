@@ -6,6 +6,7 @@ import com.project.coffeeshopapp.enums.UserSortField;
 import com.project.coffeeshopapp.enums.UserStatus;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class UserSearchRequest extends BasePaginationSortRequest<UserSortField> 
     private UserStatus status;
     private Boolean sex;
     private Long roleId;
+    private List<Long> roleIds = new ArrayList<>();
 
     @Override
     protected List<UserSortField> initSortBy() {
