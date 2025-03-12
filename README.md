@@ -49,7 +49,8 @@ The system is designed to meet the challenges of managing inventory, tracking or
 
 - Protect sensitive user information with password encryption.
 - Comprehensive logging and monitoring for auditing user actions.
-
+### ERD
+![image](https://github.com/user-attachments/assets/fe9a95c6-4603-424e-bf18-96be92f721cb)
 ### Tech Stack
 
 #### Backend:
